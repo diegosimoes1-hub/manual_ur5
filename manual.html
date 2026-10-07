@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="apple-touch-icon" sizes="180x180" href="icone.png">
+<link rel="icon" type="image/png" href="icone.png">
+<meta name="apple-mobile-web-app-title" content="Manual UR5">
+<title>Manual do UR5 CB2 — para quem nunca usou</title>
+<!--
+  Manual de operacao para usuario leigo.
+
+  Dois caminhos, na mesma ordem em que a pessoa vai encontrar: a tela do
+  navegador (que e o que este site serve) e o teach pendant do robo (que e
+  o que existe no laboratorio quando o computador nao esta por perto).
+
+  As telas do pendant descritas aqui sao as do PolyScope 1.8 no controlador
+  CB2, que e o robo do laboratorio. Foram conferidas contra o manual de
+  usuario oficial do UR5 com CB2, e nao contra o CB3: no CB3 varios nomes
+  mudam (aparece Home na aba Move, a inicializacao vira uma tela so) e
+  seguir instrucao de CB3 num CB2 termina em botao que nao existe.
+-->
+<style>
+:root{--fundo:#111318;--painel:#1a1d24;--borda:#2b303a;--texto:#e8e8e8;
+      --fraco:#9aa3ad;--destaque:#8fd0ff;--alerta:#ff8f8f;--ambar:#ffc46b;
+      --verde:#8fe3a8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--texto);
+     font:16px/1.65 -apple-system,"Segoe UI",system-ui,sans-serif}
+main{max-width:46rem;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+h1{font-size:1.7rem;line-height:1.25;margin:0 0 .25rem}
+.sub{color:var(--fraco);margin:0 0 2rem}
+h2{font-size:1.25rem;margin:3rem 0 .75rem;padding-top:1.25rem;
+   border-top:1px solid var(--borda)}
+h2 .num{color:var(--fraco);font-weight:400;margin-right:.5rem}
+h3{font-size:1.05rem;margin:2rem 0 .5rem}
+h4{font-size:.95rem;margin:1.5rem 0 .4rem;color:var(--destaque)}
+p{margin:0 0 1rem}
+ol,ul{margin:0 0 1rem;padding-left:1.4rem}
+li{margin-bottom:.55rem}
+code{font-family:"SF Mono",Consolas,ui-monospace,monospace;font-size:.92em;
+     background:#0c0e12;border:1px solid var(--borda);border-radius:3px;
+     padding:.08em .35em}
+pre{background:#0c0e12;border:1px solid var(--borda);border-radius:6px;
+    padding:.85rem 1rem;overflow-x:auto;margin:0 0 1rem}
+pre code{background:none;border:none;padding:0;color:var(--destaque)}
+a{color:var(--destaque)}
+table{width:100%;border-collapse:collapse;margin:0 0 1.25rem;font-size:.93rem}
+th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--borda);
+      vertical-align:top}
+th{color:var(--fraco);font-weight:600;font-size:.82rem;
+   text-transform:uppercase;letter-spacing:.05em}
+caption{caption-side:bottom;color:var(--fraco);font-size:.85rem;
+        text-align:left;padding-top:.5rem}
+.caixa{background:var(--painel);border:1px solid var(--borda);
+       border-left:3px solid var(--destaque);border-radius:6px;
+       padding:1rem 1.15rem;margin:0 0 1.5rem}
+.caixa p:last-child{margin-bottom:0}
+.caixa.perigo{border-left-color:var(--alerta)}
+.caixa.atencao{border-left-color:var(--ambar)}
+.caixa b.rotulo{display:block;font-size:.8rem;letter-spacing:.06em;
+       text-transform:uppercase;color:var(--fraco);margin-bottom:.35rem}
+.nota{color:var(--fraco);font-size:.92rem}
+.botao{display:inline-block;background:var(--destaque);color:#111;
+       font-weight:600;text-decoration:none;padding:.8rem 1.3rem;
+       border-radius:6px;font-size:1rem}
+.botao.vazio{background:transparent;color:var(--texto);
+       border:1px solid var(--borda);font-weight:400;font-size:.93rem}
+.acoes{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;
+       margin:.5rem 0 1.25rem}
+nav.sumario{background:var(--painel);border:1px solid var(--borda);
+       border-radius:6px;padding:1rem 1.15rem;margin:0 0 2rem}
+nav.sumario ol{margin:0;padding-left:1.3rem}
+nav.sumario li{margin-bottom:.3rem}
+.pilula{display:inline-block;font-size:.78rem;font-weight:700;
+        letter-spacing:.04em;padding:.12em .5em;border-radius:99px;
+        border:1px solid currentColor;white-space:nowrap}
+.p-cinza{color:var(--fraco)} .p-verde{color:var(--verde)}
+.p-ambar{color:var(--ambar)} .p-vermelho{color:var(--alerta)}
+figure{margin:1.5rem 0}
+figure svg{display:block;max-width:100%;height:auto;margin:0 auto}
+figcaption{color:var(--fraco);font-size:.88rem;text-align:center;
+           margin-top:.6rem}
+.passos{counter-reset:passo;list-style:none;padding-left:0}
+.passos>li{counter-increment:passo;position:relative;padding-left:2.4rem;
+       margin-bottom:1rem}
+.passos>li::before{content:counter(passo);position:absolute;left:0;top:.1rem;
+       width:1.7rem;height:1.7rem;border-radius:50%;background:var(--painel);
+       border:1px solid var(--borda);color:var(--destaque);font-size:.85rem;
+       font-weight:700;display:flex;align-items:center;justify-content:center}
+footer{margin-top:3.5rem;padding-top:1.25rem;border-top:1px solid var(--borda);
+       color:var(--fraco);font-size:.9rem}
+.voltar{display:inline-block;margin-bottom:1.5rem;color:var(--fraco);
+        text-decoration:none;font-size:.9rem}
+.voltar:hover{color:var(--texto)}
+ol.refs{list-style:none;padding-left:0;margin:0 0 1.25rem;counter-reset:ref}
+ol.refs li{counter-increment:ref;position:relative;padding-left:2.2rem;
+           margin-bottom:.9rem}
+ol.refs li::before{content:"[" counter(ref) "]";position:absolute;left:0;
+           font-weight:700;color:var(--destaque)}
+ol.refs .url{display:block;font-family:"SF Mono",Consolas,ui-monospace,monospace;
+           font-size:.82rem;word-break:break-all}
+ol.refs .o-que{display:block;color:var(--fraco);font-size:.92rem;
+           margin-top:.15rem}
+sup.ref{font-size:.7em;font-weight:700;color:var(--destaque)}
+/* Em tela estreita as tabelas de tres colunas ficam apertadas. Encolher a
+   celula e melhor que rolagem horizontal: quem le isso no celular esta com
+   uma mao no robo. */
+@media (max-width:30rem){
+  table{font-size:.86rem}
+  th,td{padding:.4rem .35rem}
+  .passos>li{padding-left:2.1rem}
+}
+@media print{body{background:#fff;color:#000}a{color:#000}}
+</style>
+</head>
+<body>
+<main>
+
+<a class="voltar" href="https://ricardobertolin.github.io/cobot_testing_ur5_app/">&larr; voltar para a página inicial</a>
+<a class="voltar" href="manual-impresso.pdf" style="float:right">versão para
+imprimir (PDF) &rarr;</a>
+
+<h1>Manual do UR5 para quem nunca usou</h1>
+<p class="sub">Robô UR5 com controlador CB2, PolyScope 1.8. Como operar pela
+tela deste site e como operar sem ela, direto no teach pendant.</p>
+
+<div class="caixa perigo">
+<b class="rotulo">Leia antes de tudo</b>
+<p>O UR5 é um robô colaborativo, e isso quer dizer que ele para sozinho ao
+bater em alguma coisa. Não quer dizer que ele é inofensivo. Com uma
+ferramenta pontuda na ponta, ou com peça pesada na garra, ele machuca.
+<b>Nunca fique dentro do alcance do braço com o robô ligado sem ter a parada
+de emergência ao alcance da mão.</b></p>
+</div>
+
+<nav class="sumario">
+<b>O que tem aqui</b>
+<ol>
+<li><a href="#seguranca">Segurança, em seis frases</a></li>
+<li><a href="#robo">O robô: o que é e quanto ele aguenta</a></li>
+<li><a href="#tela">Caminho A: operar pela tela do navegador</a></li>
+<li><a href="#pendant">Caminho B: operar pelo teach pendant, sem software</a></li>
+<li><a href="#equivalencia">A mesma ação nos dois lugares</a></li>
+<li><a href="#problemas">Quando alguma coisa dá errado</a></li>
+<li><a href="#glossario">Glossário</a></li>
+<li><a href="#referencias">Referências</a></li>
+</ol>
+</nav>
+
+<p>Este manual serve duas pessoas diferentes. A primeira tem um navegador na
+frente, quer entender o robô e treinar sem risco nenhum: é a
+<a href="#tela">seção 3</a>, e não precisa de robô nem de instalação. A
+segunda está de pé na célula, com o teach pendant na mão e nenhum computador
+por perto: é a <a href="#pendant">seção 4</a>, que é a operação oficial do
+robô, do jeito que a Universal Robots desenhou.</p>
+
+<p>Os dois caminhos fazem quase as mesmas coisas, com nomes diferentes. A
+<a href="#equivalencia">seção 5</a> é a tabela de tradução entre eles.</p>
+
+<h2 id="seguranca"><span class="num">1.</span>Segurança, em seis frases</h2>
+
+<ol>
+<li><b>A parada de emergência é o botão vermelho de cogumelo no teach
+pendant.</b> Soco nele e o robô para. Para destravar, gire o botão no
+sentido da seta gravada nele e reinicie o robô pela tela.</li>
+
+<li><b>Toda tecla de movimento é tecla presa, não clique.</b> O robô anda
+enquanto o dedo está em cima e para quando o dedo sai. Isso vale na tela do
+navegador e vale no pendant. Se precisar parar, tire o dedo.</li>
+
+<li><b>O robô não desvia de nada sozinho.</b> Ele não sabe que existe uma
+mesa, uma bancada ou o seu braço. Ele bate, sente a força e para. Bater é
+ruim para o robô e pior para quem está na frente.</li>
+
+<li><b>Olhe para o robô, não para a tela, enquanto ele se move.</b> A tela
+mostra números. O robô mostra se vai bater.</li>
+
+<li><b>Comece devagar.</b> A velocidade na tela e no pendant é ajustável em
+porcentagem. 20% a 30% é o que se usa para aprender, e não existe motivo
+nenhum para subir disso enquanto você não souber exatamente para onde o
+braço vai.</li>
+
+<li><b>Na dúvida, simule.</b> A tela deste site, sem robô nenhum do outro
+lado, faz exatamente os mesmos movimentos sem consequência nenhuma. O
+próprio pendant também tem um botão de simulação para programas.</li>
+</ol>
+
+<div class="caixa atencao">
+<b class="rotulo">A dúvida mais comum de quem está começando</b>
+<p>O robô pode ter até três origens de parada, e elas <b>não são a mesma
+coisa</b>. A parada de emergência é o botão vermelho, corta a potência e é
+física. A parada de proteção (<i>protective stop</i>) é o robô batendo em
+algo e parando sozinho, acima de uns 150 N de força. A parada de segurança
+(<i>safeguard stop</i>) é uma cortina de luz ou tapete no chão da célula,
+quando existe. As três travam o braço, mas cada uma se destrava de um jeito
+diferente, e o pendant diz qual delas foi.</p>
+</div>
+
+<h2 id="robo"><span class="num">2.</span>O robô: o que é e quanto ele aguenta</h2>
+
+<p>O UR5 é um braço de seis juntas rotativas feito de tubo de alumínio. Ele
+não tem trilho, não tem pistão e não tem eixo linear: tudo o que ele faz é
+girar seis motores de um jeito coordenado, e o conjunto disso leva a ponta
+da ferramenta para onde se quer.</p>
+
+<h3>As seis juntas</h3>
+
+<p>Da base para a ponta, com os nomes em inglês que aparecem no pendant e os
+nomes em português que aparecem na tela deste site:</p>
+
+<table>
+<thead><tr><th>Ordem</th><th>No pendant</th><th>Nesta tela</th><th>O que ela faz</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Base</td><td>Base</td><td>gira o braço inteiro em volta do pedestal</td></tr>
+<tr><td>2</td><td>Shoulder</td><td>Ombro</td><td>levanta e abaixa o braço todo</td></tr>
+<tr><td>3</td><td>Elbow</td><td>Cotovelo</td><td>dobra o braço no meio</td></tr>
+<tr><td>4</td><td>Wrist 1</td><td>Punho 1</td><td>inclina o punho</td></tr>
+<tr><td>5</td><td>Wrist 2</td><td>Punho 2</td><td>gira o punho de lado</td></tr>
+<tr><td>6</td><td>Wrist 3</td><td>Punho 3</td><td>gira a flange onde a ferramenta é aparafusada</td></tr>
+</tbody>
+</table>
+
+<p>Cada junta vai de <b>&minus;360° a +360°</b>, ou seja, uma volta inteira
+para cada lado a partir do zero. Chegando no limite, ela simplesmente para
+de girar naquele sentido, e a única saída é voltar.</p>
+
+<h3>O espaço de trabalho</h3>
+
+<p>O braço alcança <b>850 mm</b> medidos do centro da base. Fora disso não
+existe pose possível, e a tela avisa quando você pede algo inalcançável.</p>
+
+<p>Há uma segunda região a evitar, e essa é menos óbvia: o <b>cilindro
+logo acima e logo abaixo da base</b>, de uns 18 cm de raio. A geometria ali
+é ruim. Para a ferramenta andar um milímetro em linha reta, a junta da base
+precisa girar muito, então o robô fica rápido e nervoso enquanto a ponta
+quase não sai do lugar. Não é defeito, é o formato do braço. Evite passar
+por cima da própria base.</p>
+
+<h3>Números do UR5</h3>
+
+<table>
+<thead><tr><th>Item</th><th>Valor</th></tr></thead>
+<tbody>
+<tr><td>Carga na ponta</td><td>5 kg, incluindo o peso da garra</td></tr>
+<tr><td>Alcance</td><td>850 mm do centro da base</td></tr>
+<tr><td>Graus de liberdade</td><td>6 juntas rotativas</td></tr>
+<tr><td>Curso de cada junta</td><td>&plusmn;360°</td></tr>
+<tr><td>Velocidade máxima de junta</td><td>180°/s</td></tr>
+<tr><td>Velocidade máxima da ponta</td><td>1 m/s</td></tr>
+<tr><td>Repetibilidade</td><td>&plusmn;0,1 mm</td></tr>
+<tr><td>Peso do braço</td><td>18,4 kg</td></tr>
+<tr><td>Diâmetro da base</td><td>149 mm, fixado com 4 parafusos M8</td></tr>
+<tr><td>Proteção</td><td>IP54 no braço, IP20 na caixa de controle e no pendant</td></tr>
+<tr><td>Ruído</td><td>abaixo de 65 dB(A)</td></tr>
+<tr><td>Temperatura de trabalho</td><td>0 °C a 50 °C</td></tr>
+<tr><td>Consumo</td><td>90 W no mínimo, 150 W típico, 325 W no pico</td></tr>
+<tr><td>Ligações na ponta</td><td>2 entradas digitais, 2 saídas digitais, 2 entradas analógicas, alimentação de 12 V ou 24 V com 600 mA</td></tr>
+<tr><td>Ligações na caixa</td><td>16 entradas e 16 saídas digitais, 2 entradas e 2 saídas analógicas</td></tr>
+<tr><td>Rede</td><td>Ethernet TCP/IP 100 Mbit</td></tr>
+<tr><td>Teach pendant</td><td>touchscreen de 12 polegadas, 1,5 kg, cabo de 4,5 m</td></tr>
+</tbody>
+<caption>Valores da folha de dados do UR5 da Universal Robots <sup class="ref">[2]</sup>. Os limites de
+junta, o alcance e as velocidades máximas são os mesmos que o software deste
+projeto usa para validar movimento.</caption>
+</table>
+
+<h3>O controlador deste robô é um CB2, e isso importa</h3>
+
+<p>Existem três gerações de controlador de UR: CB2, CB3 e a série e. O robô
+do laboratório é <b>CB2, rodando PolyScope 1.8.25319</b>, que é a geração
+mais antiga das três. Quase todo tutorial que se acha na internet é de CB3
+ou da série e, e ali vários botões têm outro nome ou não existem. Se você
+seguir um vídeo de CB3 neste robô, vai procurar botão que não está lá.</p>
+
+<p>As diferenças que aparecem na prática:</p>
+
+<ul>
+<li>No CB2 a inicialização é uma tela com <b>seis luzinhas</b>, uma por
+junta, e você dirige as juntas até todas ficarem verdes. No CB3 isso virou
+um botão só.</li>
+<li>No CB2 a aba <b>Move</b> não tem botão <code>Home</code>. Ir para uma
+posição guardada é pela aba <b>AutoMove</b>.</li>
+<li>O CB2 não tem as telas de configuração de segurança do CB3, nem os
+limites de segurança ajustáveis por software.</li>
+<li>Quem programa: o CB2 não tem RTDE. A leitura de estado sai da interface
+de tempo real, na porta 30003, num formato próprio do 1.8.</li>
+</ul>
+
+<h2 id="tela"><span class="num">3.</span>Caminho A: operar pela tela do navegador</h2>
+
+<p class="acoes">
+<a class="botao" href="https://ricardobertolin.github.io/cobot_testing_ur5_app/web/pendant_dt.html">Abrir a tela agora</a>
+<span class="nota">não baixa nada, não instala nada</span>
+</p>
+
+<p>Essa tela é uma cópia da tela <b>Move</b> do PolyScope, com o robô em 3D
+ao lado. Aberta direto daqui, ela roda inteira dentro do navegador e
+<b>não há robô nenhum do outro lado</b>: a conta é simulada, e nada do que
+você fizer sai do aparelho. É o lugar certo para errar.</p>
+
+<p>No iPad, em Safari, <b>Compartilhar → Adicionar à Tela de Início</b>
+deixa a tela cheia, sem barra de endereço, com ícone próprio.</p>
+
+<h3>O que aparece na tela</h3>
+
+<table>
+<thead><tr><th>Onde</th><th>O que é</th></tr></thead>
+<tbody>
+<tr><td>Abas de cima</td><td><code>Program</code>, <code>Installation</code>,
+<code>Move</code>, <code>I/O</code>, <code>Log</code>. São as abas do
+PolyScope. Aqui só a <code>Move</code> funciona, que é a de mover o
+robô.</td></tr>
+<tr><td>Pílula no canto</td><td>Em que pé está a ligação com o robô. Aberta
+deste site ela diz <span class="pilula p-cinza">SIMULAÇÃO</span> o tempo
+todo. A lista completa está <a href="#pilulas">mais abaixo</a>.</td></tr>
+<tr><td><code>Joint Position</code></td><td>O ângulo atual das seis juntas,
+em graus, com uma seta para cada lado.</td></tr>
+<tr><td><code>Robot</code></td><td>Onde a ponta da ferramenta está.
+<code>X</code>, <code>Y</code> e <code>Z</code> em milímetros;
+<code>RX</code>, <code>RY</code> e <code>RZ</code> são a orientação, em
+radianos.</td></tr>
+<tr><td><code>Feature</code></td><td>Escolhe se as setas de X, Y e Z andam
+no referencial da <code>Base</code> ou da <code>Tool</code>.</td></tr>
+<tr><td><code>Speed</code></td><td>A porcentagem da velocidade de jog.
+Nasce em 30%.</td></tr>
+<tr><td>Botões de pose</td><td><code>Zero</code>, <code>Vertical</code> e
+<code>Trabalho</code>. Saltam direto para uma postura guardada.</td></tr>
+<tr><td>O 3D</td><td>O robô desenhado a partir do CAD real. Arrastar gira a
+câmera, dois dedos ou a roda aproximam.</td></tr>
+</tbody>
+</table>
+
+<h3>Mover o robô na tela</h3>
+
+<ol class="passos">
+<li><b>Escolha a velocidade primeiro.</b> Deixe o <code>Speed</code> em 20%
+ou 30% enquanto estiver aprendendo.</li>
+
+<li><b>Para girar uma junta só</b>, segure uma das setas da linha daquela
+junta em <code>Joint Position</code>. Ela gira enquanto o dedo estiver em
+cima. Solte e ela para. Veja o ângulo mudando no número ao lado e o braço
+mexendo no 3D.</li>
+
+<li><b>Para andar em linha reta</b>, use as setas de <code>X</code>,
+<code>Y</code> e <code>Z</code> em <code>Robot</code>. Agora o robô move
+várias juntas ao mesmo tempo, coordenadas, para que a <i>ponta</i> ande
+reto. É o modo que se usa de verdade no dia a dia.</li>
+
+<li><b>Para mudar só a inclinação da ferramenta</b>, sem tirar a ponta do
+lugar, use <code>RX</code>, <code>RY</code> e <code>RZ</code>.</li>
+
+<li><b>Para voltar a um lugar conhecido</b>, aperte
+<code>Trabalho</code>. É uma postura boa, com o cotovelo dobrado, e de lá
+todas as setas funcionam bem.</li>
+</ol>
+
+<div class="caixa">
+<b class="rotulo">Base ou Tool: a diferença que confunde todo mundo</b>
+<p>Em <code>Base</code>, o <code>Z</code> aponta para cima, sempre, não
+importa como a ferramenta esteja virada. É o referencial do chão.</p>
+<p>Em <code>Tool</code>, o <code>Z</code> aponta <b>para onde a ferramenta
+está olhando</b>. Se a garra está virada para baixo, apertar
+<code>Z+</code> em Tool desce. Se está virada de lado, o mesmo botão anda de
+lado. É o referencial certo para aproximar e recuar de uma peça.</p>
+<p>Regra prática: <b>Base para se localizar, Tool para encostar.</b></p>
+</div>
+
+<h3>Por que às vezes a seta não anda</h3>
+
+<p>Tem uma postura em que o braço fica completamente esticado e o punho
+alinhado, que é a pose <code>Vertical</code>. Ali, apertar a seta de
+<code>Z</code> não move quase nada, e a tela avisa
+<code>singularidade próxima</code>.</p>
+
+<p>Isso não é defeito nem travamento. Braço esticado não tem como se
+esticar mais, e o robô, para andar naquela direção, precisaria de
+velocidade infinita em alguma junta. O software recusa por segurança.
+A saída é a mesma sempre: <b>dobre o cotovelo</b>, com a seta da junta
+Cotovelo ou apertando <code>Trabalho</code>, e as setas voltam a
+funcionar.</p>
+
+<h3 id="pilulas">A pílula de estado</h3>
+
+<p>A faixinha no alto da tela diz o que está do outro lado. O texto basta
+sozinho, a cor é só reforço.</p>
+
+<table>
+<thead><tr><th>Pílula</th><th>O que houve</th><th>O que fazer</th></tr></thead>
+<tbody>
+<tr><td><span class="pilula p-cinza">SIMULAÇÃO</span></td><td>não há robô envolvido</td><td>nada, é o normal neste site</td></tr>
+<tr><td><span class="pilula p-verde">CONECTADO</span></td><td>o robô responde e está pronto</td><td>nada</td></tr>
+<tr><td><span class="pilula p-verde">COMANDANDO</span></td><td>esta tela está movendo o robô de verdade</td><td>fique com o pendant na mão</td></tr>
+<tr><td><span class="pilula p-ambar">ROBÔ NÃO PRONTO</span></td><td>a rede está boa, mas o robô não pode mover</td><td>ir até o pendant: falta potência, freio travado ou parada de proteção</td></tr>
+<tr><td><span class="pilula p-ambar">SEM POSIÇÃO</span></td><td>o robô responde, mas não manda a posição</td><td>reiniciar o robô pelo pendant</td></tr>
+<tr><td><span class="pilula p-vermelho">SEM CONEXÃO</span></td><td>o robô não respondeu</td><td>cabo de rede, IP ou firewall</td></tr>
+<tr><td><span class="pilula p-vermelho">SEM SERVIDOR</span></td><td>a página perdeu o programa no computador</td><td>a janela preta do iniciador fechou, abra de novo</td></tr>
+</tbody>
+</table>
+
+<p class="nota">A diferença entre amarelo e vermelho é o ponto todo:
+<b>vermelho é problema de rede, amarelo é ir até o robô.</b> São dois
+problemas com soluções diferentes, e adivinhar qual é custa tempo na
+célula.</p>
+
+<h3>Quando você quiser que a tela mexa no robô de verdade</h3>
+
+<p>O navegador sozinho não conversa com o robô: navegador não abre socket
+cru. Para isso existe um programa em Python que roda no seu computador e
+fica no meio. A página inicial tem o
+<a href="https://ricardobertolin.github.io/cobot_testing_ur5_app/">botão de baixar o iniciador</a>, que resolve tudo sozinho e
+pergunta em qual dos modos subir:</p>
+
+<table>
+<thead><tr><th>Modo</th><th>O que faz</th><th>Quando usar</th></tr></thead>
+<tbody>
+<tr><td><b>1. Simulação</b></td><td>não conecta em nada</td><td>aula, treino, demonstração</td></tr>
+<tr><td><b>2. Espelhar</b></td><td>lê a posição real do UR5 e mostra na tela, com as setas desligadas</td><td>acompanhar o robô enquanto outra pessoa opera pelo pendant. É o modo seguro.</td></tr>
+<tr><td><b>3. Comandar</b></td><td><b>move o robô de verdade</b> pelas setas da tela</td><td>só com o pendant ao alcance da mão</td></tr>
+</tbody>
+</table>
+
+<div class="caixa perigo">
+<b class="rotulo">Sobre o modo 3</b>
+<p>No modo comandar a página ganha uma tarja vermelha, as poses guardadas
+somem (salto instantâneo de junta só existe em simulação) e no lugar delas
+aparecem <code>PARAR</code>, <code>INICIO</code> e
+<code>DEFINIR INICIO</code>. As setas de <code>RX</code>, <code>RY</code> e
+<code>RZ</code> viram só leitura.</p>
+<p>Duas proteções seguram esse modo. A página renova o pedido de movimento
+a cada 200 ms, e meio segundo sem renovação faz o servidor soltar o jog. E
+cada comando enviado ao robô já vai com prazo de validade, então o robô
+desacelera sozinho se o computador morrer. Wi-Fi caindo derruba a primeira,
+Python morrendo derruba a segunda, e nenhuma das duas deixa junta girando.</p>
+<p><b>O que não tem substituto é a parada de emergência física.</b> Um botão
+numa tela de vidro não é homem-morto. Se o objetivo é só olhar, use o modo
+2.</p>
+</div>
+
+<h2 id="pendant"><span class="num">4.</span>Caminho B: operar pelo teach pendant, sem software nenhum</h2>
+
+<p>Esta é a operação oficial do robô, e é a que vale quando não há
+computador por perto. Tudo o que vem abaixo acontece no teach pendant, que
+é a caixa com tela de toque presa por cabo à caixa de controle.</p>
+
+<div class="caixa atencao">
+<p>As telas descritas aqui são as do <b>PolyScope 1.8 em controlador
+CB2</b>, que é este robô. Em CB3 e na série e vários nomes mudam.</p>
+</div>
+
+<h3>4.1 O que tem no pendant</h3>
+
+<figure>
+<!--
+  O pendant do CB2 e DEITADO: tela ocupando quase toda a frente, e os dois
+  botoes empilhados numa faixa a direita, energia em cima e emergencia
+  logo abaixo. O desenho anterior era um retrato com os botoes em cantos
+  opostos, que e a planta do CB3, e mandava quem procurasse para o lugar
+  errado do aparelho.
+-->
+<svg viewBox="0 0 430 250" role="img" aria-label="Desenho do teach pendant do UR5 CB2, visto de frente: formato deitado, tela de toque ocupando quase toda a frente, botão de energia no canto superior direito e parada de emergência logo abaixo dele. Ao lado, o verso com o botão de Freedrive.">
+  <rect x="14" y="20" width="238" height="164" rx="14" fill="#1a1d24" stroke="#2b303a" stroke-width="2"/>
+  <rect x="28" y="34" width="168" height="124" rx="3" fill="#0c0e12" stroke="#2b303a"/>
+  <text x="112" y="92" fill="#5f6873" font-family="sans-serif" font-size="13" text-anchor="middle">tela de toque</text>
+  <text x="112" y="110" fill="#4a525c" font-family="sans-serif" font-size="11" text-anchor="middle" font-style="italic">PolyScope</text>
+  <text x="30" y="176" fill="#4a525c" font-family="sans-serif" font-size="9" letter-spacing="1">UNIVERSAL ROBOTS</text>
+
+  <circle cx="224" cy="52" r="11" fill="#1f3a26" stroke="#8fe3a8" stroke-width="1.6"/>
+  <path d="M224 46 v7" stroke="#8fe3a8" stroke-width="1.8" fill="none"/>
+  <circle cx="224" cy="51" r="4.5" fill="none" stroke="#8fe3a8" stroke-width="1.4"/>
+  <text x="246" y="46" fill="#8fe3a8" font-family="sans-serif" font-size="11">2 liga / desliga</text>
+
+  <circle cx="224" cy="110" r="19" fill="#5a4a10" stroke="#2b303a" stroke-width="1.5"/>
+  <circle cx="224" cy="110" r="14" fill="#8c1c1c" stroke="#ff8f8f" stroke-width="1.8"/>
+  <text x="224" y="113" fill="#ff8f8f" font-family="sans-serif" font-size="6" text-anchor="middle" font-weight="bold">E-STOP</text>
+  <text x="248" y="114" fill="#ff8f8f" font-family="sans-serif" font-size="11">1 parada de emergência</text>
+
+  <rect x="14" y="196" width="238" height="42" rx="12" fill="#14171d" stroke="#2b303a" stroke-width="2" stroke-dasharray="5 4"/>
+  <rect x="116" y="204" width="34" height="26" rx="6" fill="#22262f" stroke="#8fd0ff" stroke-width="1.6"/>
+  <text x="264" y="221" fill="#8fd0ff" font-family="sans-serif" font-size="11">3 Freedrive, no verso</text>
+  <path d="M150 217 H258" stroke="#8fd0ff" stroke-width="1" fill="none"/>
+  <text x="133" y="194" fill="#5f6873" font-family="sans-serif" font-size="10" text-anchor="middle" font-style="italic">verso</text>
+</svg>
+<figcaption>Os três controles físicos que importam. O resto é tela. O
+pendant do CB2 é deitado, e os dois botões ficam empilhados numa faixa à
+direita.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Controle</th><th>Onde</th><th>Para que serve</th></tr></thead>
+<tbody>
+<tr><td><b>Parada de emergência</b></td><td>faixa da direita, logo abaixo
+do botão de energia</td><td>cogumelo vermelho com colar amarelo, marcado
+<code>E-STOP</code>. Corta a potência das juntas e destrava girando o
+botão.</td></tr>
+<tr><td><b>Botão de energia</b></td><td>canto superior direito</td>
+<td>botão redondo embutido, com o símbolo de energia. Liga a caixa de
+controle e o PolyScope, e é o mesmo que desliga.</td></tr>
+<tr><td><b>Freedrive</b> (também chamado <b>Teach</b>)</td><td><b>nas
+costas</b> do pendant</td><td>segurando ele, o robô solta os freios e você
+empurra o braço com a mão.</td></tr>
+</tbody>
+</table>
+
+<h3>4.2 Ligar o robô, do zero</h3>
+
+<ol class="passos">
+<li><b>Confira que ninguém está dentro do alcance do braço</b>, e que não
+há ferramenta, peça ou cabo no caminho.</li>
+
+<li><b>Aperte o botão de energia do pendant.</b> A tela acende e fica
+mostrando texto rolando. A partida leva perto de um minuto. Isso é
+normal.</li>
+
+<li><b>Se aparecer um aviso de que a emergência está apertada</b>, toque em
+<code>To Initialization Screen</code> e destrave o botão vermelho girando
+ele. O estado do robô muda de <code>Emergency Stopped</code> para
+<code>Robot Power Off</code>.</li>
+
+<li><b>Toque em <code>ON</code>.</b> Espere alguns segundos. Isso dá energia
+aos motores, mas os freios continuam travados.</li>
+
+<li><b>Toque em <code>Start</code>.</b> O robô faz um barulho seco e se mexe
+um pouquinho: são os freios soltando. Esse barulho é esperado.</li>
+
+<li><b>Agora inicialize as juntas</b>, que é o passo da próxima seção.</li>
+</ol>
+
+<h3>4.3 Inicializar: as seis luzinhas</h3>
+
+<p>Ligado não é o mesmo que pronto. Ao ligar, o robô <b>não sabe onde as
+juntas estão</b>. Cada junta precisa girar um pouco, uns 20 graus, até
+passar por uma marca que ela reconhece. Enquanto não passar, ela não
+trabalha.</p>
+
+<p>A tela de inicialização mostra uma luzinha por junta:</p>
+
+<table>
+<thead><tr><th>Luz</th><th>Quer dizer</th></tr></thead>
+<tbody>
+<tr><td><span class="pilula p-vermelho">vermelha</span></td><td>a junta está
+parada, e por algum motivo não roda</td></tr>
+<tr><td><span class="pilula p-ambar">amarela</span></td><td>a junta está
+viva, mas ainda não sabe onde está. Falta inicializar.</td></tr>
+<tr><td><span class="pilula p-verde">verde</span></td><td>a junta está
+pronta</td></tr>
+</tbody>
+</table>
+
+<p><b>As seis precisam ficar verdes</b> para o robô operar.</p>
+
+<p>Há duas maneiras de chegar lá, e as duas exigem segurar o botão:</p>
+
+<ul>
+<li><b><code>Auto</code>:</b> segure o botão <code>Auto</code> e o robô
+dirige as juntas sozinho até ficarem prontas. Soltando e apertando de novo,
+ele inverte o sentido. É o caminho normal. Existe um <code>Auto</code> geral
+e um por junta.</li>
+<li><b>Setas azuis:</b> dirija cada junta na mão, com as setas da linha dela.
+Use quando o braço estiver encostado em alguma coisa e o movimento
+automático puder empurrar ele contra o obstáculo.</li>
+</ul>
+
+<div class="caixa perigo">
+<p>Durante a inicialização <b>o robô não desvia de nada</b>, nem de si
+mesmo. Se ele estiver encostado numa mesa ou dentro de uma máquina, dirigir
+as juntas pode danificar a caixa de engrenagens. Olhe para o braço, não para
+a tela, e prefira as setas ao <code>Auto</code> quando houver obstáculo
+perto.</p>
+</div>
+
+<p>Com as seis verdes, toque no botão de sair e você cai na tela inicial,
+com quatro opções:</p>
+
+<table>
+<thead><tr><th>Botão</th><th>O que faz</th></tr></thead>
+<tbody>
+<tr><td><code>Run Program</code></td><td>roda um programa que já existe. É a
+forma mais simples de operar.</td></tr>
+<tr><td><code>Program Robot</code></td><td>cria ou altera um programa, e é
+por aqui que se chega nas abas <code>Move</code> e <code>I/O</code>.</td></tr>
+<tr><td><code>Setup Robot</code> (ou só <code>Setup</code>)</td><td>senha,
+idioma, calibração do toque, rede.</td></tr>
+<tr><td><code>Shut Down Robot</code></td><td>desliga tudo, do jeito
+certo.</td></tr>
+</tbody>
+</table>
+
+<h3>4.4 Mover o robô pela aba Move</h3>
+
+<p>Caminho: <code>Program Robot</code> → aba <code>Move</code>, no alto da
+tela.</p>
+
+<p>É a mesma tela que este site imita. À esquerda o robô desenhado em 3D, à
+direita a posição da ferramenta e os ângulos das juntas.</p>
+
+<h4>Move Tool: mover a ponta</h4>
+<ul>
+<li><b>Setas de cima (as retas):</b> seguradas, levam a ponta da ferramenta
+na direção indicada, em linha reta.</li>
+<li><b>Setas de baixo (as curvas):</b> giram a ferramenta em volta da
+própria ponta, sem tirar ela do lugar. O ponto de giro é o TCP, que aparece
+como uma bolinha azul no desenho.</li>
+<li><b>Solte a seta e o movimento para na hora.</b></li>
+</ul>
+
+<h4>Feature: em relação a quê</h4>
+<p>No alto à direita está o seletor <code>Feature</code>, que decide em
+relação a que referencial as setas andam. As opções úteis para começar são
+<code>Base</code> e <code>Tool</code>, exatamente como explicado
+<a href="#tela">na seção da tela</a>. Há também <code>View</code>, que anda
+em relação ao que você está vendo no desenho 3D. Se você girar o desenho até
+ele ficar na mesma posição em que você vê o robô real, <code>View</code>
+fica muito intuitivo: a seta para a direita na tela move o robô para a
+direita aos seus olhos.</p>
+
+<h4>Move Joints: girar uma junta só</h4>
+<p>Cada junta tem uma barra horizontal, que é o curso dela de &minus;360° a
++360°, e uma seta para cada lado. Chegando no limite, a junta não gira mais
+naquele sentido. Os valores também podem ser digitados: toque no número e o
+teclado aparece.</p>
+
+<h4>Ir para uma posição guardada: a aba AutoMove</h4>
+<p>No CB2 não existe um botão <code>Home</code> na aba <code>Move</code>. Ir
+para uma posição conhecida é pela aba <code>AutoMove</code>, que aparece
+quando o robô precisa chegar a um ponto específico, por exemplo o ponto
+inicial de um programa.</p>
+<ol>
+<li>A tela mostra uma <b>animação</b> do movimento que ele pretende
+fazer.</li>
+<li><b>Compare a animação com o robô real</b> e confirme que o caminho está
+livre. A animação não sabe o que tem na célula.</li>
+<li>Segure <code>Auto</code>. O robô executa enquanto o dedo estiver em
+cima.</li>
+<li>Se o caminho da animação não servir, toque em <code>Manual</code>, que
+leva de volta à aba <code>Move</code> para você posicionar na mão.</li>
+</ol>
+
+<h3>4.5 Freedrive: mover o robô com a mão</h3>
+
+<p>Este é o recurso que mais impressiona quem nunca viu um cobot, e é o mais
+prático de todos para ensinar posições.</p>
+
+<ol class="passos">
+<li><b>Segure o braço com uma das mãos</b>, de preferência perto do punho,
+sustentando o peso.</li>
+<li><b>Segure o botão Freedrive, nas costas do pendant</b>, com a outra
+mão.</li>
+<li><b>Empurre o braço para onde quiser.</b> Os freios soltam e ele vai
+junto.</li>
+<li><b>Solte o botão</b> e os freios travam na hora, onde o braço
+estiver.</li>
+</ol>
+
+<div class="caixa atencao">
+<p>Se a configuração de montagem ou o peso da ferramenta estiverem errados
+na instalação do robô, o braço pode <b>começar a cair</b> quando você
+apertar o Freedrive: o controlador está compensando a gravidade com o peso
+errado. Se isso acontecer, <b>solte o botão imediatamente</b>, que os freios
+voltam, e peça para alguém conferir o peso da ferramenta e a orientação de
+montagem em <code>Installation</code>.</p>
+</div>
+
+<p class="nota">Existe uma variante disso para emergência. Com o robô
+ligado (<code>ON</code>) mas <b>sem</b> ter apertado <code>Start</code>,
+segurar o mesmo botão coloca as juntas em modo de recuo: os freios soltam
+quando você empurra e travam quando solta. Serve para tirar o braço de dentro
+de uma máquina antes de dar partida.</p>
+
+<h3>4.6 Rodar um programa que já existe</h3>
+
+<p>É a operação mais comum, e a mais segura, porque o caminho já foi
+testado.</p>
+
+<ol class="passos">
+<li>Na tela inicial, toque em <code>Run Program</code> e escolha o
+arquivo.</li>
+<li><b>Baixe a velocidade antes de começar.</b> A barra de velocidade fica
+na parte de baixo da tela, no painel com os botões de toca-fitas (tocar,
+parar, passo a passo). Ela muda a velocidade do programa a qualquer momento,
+inclusive com ele rodando.</li>
+<li>Se você não tem certeza do que o programa faz, use o botão
+<b><code>Simulation</code></b>, ao lado de <code>Real Robot</code>, no mesmo
+painel. Em simulação o programa roda inteiro e <b>o robô não se mexe</b>.
+Vale sempre a primeira vez.</li>
+<li>Passe para <code>Real Robot</code>, toque em tocar, e <b>fique perto da
+parada de emergência</b> durante a primeira execução em velocidade
+real.</li>
+</ol>
+
+<p class="nota">Ao lado de cada linha do programa há um pontinho vermelho,
+amarelo ou verde: vermelho é erro naquela linha, amarelo é linha incompleta,
+verde é tudo certo. <b>Um programa só roda com tudo verde.</b></p>
+
+<h3>4.7 Desligar</h3>
+
+<ol>
+<li>Pare o programa.</li>
+<li>Na tela inicial, toque em <code>Shut Down Robot</code>. O botão de
+energia do pendant faz a mesma coisa.</li>
+<li>Espere a tela apagar sozinha antes de cortar a energia da parede.</li>
+</ol>
+
+<div class="caixa perigo">
+<p><b>Nunca desligue o robô arrancando da tomada ou batendo o disjuntor com
+o sistema de pé.</b> O controlador tem um sistema de arquivos como qualquer
+computador, e cortar energia no meio da escrita corrompe ele. O sintoma
+aparece semanas depois, como um robô que não dá partida, e o conserto é
+reinstalar o sistema.</p>
+<p>Para só cortar a potência das juntas, sem desligar o controlador, existe
+o botão <code>OFF</code> na tela de inicialização. Quase nunca é
+necessário.</p>
+</div>
+
+<h3>4.8 Configurar a rede, se for usar o software deste projeto</h3>
+
+<p>Só é preciso se você quiser os modos <b>espelhar</b> ou <b>comandar</b> da
+seção anterior. Para operar pelo pendant, a rede não faz falta nenhuma.</p>
+
+<p>No pendant: <code>Setup Robot</code> → <code>Setup Network</code>,
+escolha <code>Static Address</code> e preencha:</p>
+
+<pre><code>IP address       10.26.10.20
+Subnet mask      255.255.255.0
+Default gateway  0.0.0.0</code></pre>
+
+<p>Confirme que a tela passa a dizer <code>Network is connected</code>. No
+computador, ponha um endereço fixo na mesma faixa, por exemplo
+<code>10.26.10.10</code>, com máscara <code>255.255.255.0</code> e gateway
+em branco. Cabo direto entre os dois funciona, não precisa de cabo
+cruzado.</p>
+
+<h2 id="equivalencia"><span class="num">5.</span>A mesma ação nos dois lugares</h2>
+
+<table>
+<thead><tr><th>O que você quer</th><th>Na tela deste site</th><th>No teach pendant</th></tr></thead>
+<tbody>
+<tr><td>Girar uma junta</td><td>setas em <code>Joint Position</code></td><td>aba <code>Move</code>, seção <code>Move Joints</code></td></tr>
+<tr><td>Andar em linha reta</td><td>setas de <code>X</code>, <code>Y</code>, <code>Z</code> em <code>Robot</code></td><td>aba <code>Move</code>, setas retas de <code>Move Tool</code></td></tr>
+<tr><td>Girar a ferramenta no lugar</td><td>setas de <code>RX</code>, <code>RY</code>, <code>RZ</code></td><td>aba <code>Move</code>, setas curvas de <code>Move Tool</code></td></tr>
+<tr><td>Trocar o referencial</td><td><code>Feature</code>: Base ou Tool</td><td><code>Feature</code>: Base, Tool ou View</td></tr>
+<tr><td>Mudar a velocidade</td><td>barra <code>Speed</code></td><td>barra de velocidade no painel de baixo</td></tr>
+<tr><td>Ir para uma posição guardada</td><td>botões <code>Zero</code>, <code>Vertical</code>, <code>Trabalho</code></td><td>aba <code>AutoMove</code>, segurando <code>Auto</code></td></tr>
+<tr><td>Ver onde a ponta está</td><td>quadro <code>Robot</code></td><td>quadro de posição da ferramenta, no alto à direita</td></tr>
+<tr><td>Mover o braço com a mão</td><td>não existe</td><td>botão <b>Freedrive</b>, nas costas</td></tr>
+<tr><td>Parar tudo</td><td>tirar o dedo da seta</td><td>tirar o dedo, ou a parada de emergência</td></tr>
+<tr><td>Rodar um programa</td><td>não existe</td><td><code>Run Program</code></td></tr>
+<tr><td>Ligar e desligar o robô</td><td>não existe</td><td>botão de energia e <code>Shut Down Robot</code></td></tr>
+</tbody>
+</table>
+
+<p class="nota">As duas ausências do meio da tabela são de propósito. A tela
+do navegador é um espelho e um simulador, não um substituto do pendant:
+ligar, inicializar, soltar freio e rodar programa continuam sendo coisas do
+robô, no robô.</p>
+
+<h2 id="problemas"><span class="num">6.</span>Quando alguma coisa dá errado</h2>
+
+<h3>No robô</h3>
+
+<table>
+<thead><tr><th>Sintoma</th><th>Provável causa</th><th>O que fazer</th></tr></thead>
+<tbody>
+<tr><td>Tela do pendant apagada</td><td>controlador desligado, ou fonte</td><td>aperte o botão de energia do pendant</td></tr>
+<tr><td><code>Emergency Stopped</code></td><td>alguém apertou o cogumelo vermelho</td><td>gire o botão para destravar, depois <code>ON</code> e <code>Start</code></td></tr>
+<tr><td>O robô parou sozinho no meio do movimento</td><td>parada de proteção: ele encostou em algo</td><td>veja o que ele encostou, afaste, e destrave pela tela</td></tr>
+<tr><td>Luzes da inicialização amarelas</td><td>as juntas ainda não sabem onde estão</td><td>segure <code>Auto</code> até todas ficarem verdes</td></tr>
+<tr><td>Uma luz vermelha teimosa</td><td>falha naquela junta</td><td>desligue pelo <code>Shut Down Robot</code>, espere, ligue de novo. Persistindo, é manutenção.</td></tr>
+<tr><td>O braço cai ao apertar Freedrive</td><td>peso da ferramenta ou montagem errados</td><td>solte o botão na hora e confira a <code>Installation</code></td></tr>
+<tr><td>O robô se recusa a andar numa direção</td><td>singularidade, ou limite de junta</td><td>dobre o cotovelo, ou olhe a barra de curso da junta na aba <code>Move</code></td></tr>
+</tbody>
+</table>
+
+<h3>Na tela do navegador</h3>
+
+<table>
+<thead><tr><th>Sintoma</th><th>O que fazer</th></tr></thead>
+<tbody>
+<tr><td>Abre em branco, ou só com a palavra <code>Jog</code></td><td>é o navegador servindo uma cópia velha. Recarregue segurando, ou abra o <a href="https://ricardobertolin.github.io/cobot_testing_ur5_app/web/diagnostico.html">diagnóstico</a>, que testa oito coisas e diz em texto qual falhou.</td></tr>
+<tr><td>Fica para sempre em <code>carregando malhas do CAD...</code></td><td>quase sempre é aba demais aberta no mesmo endereço. O navegador só abre 6 conexões por endereço, e cada aba visível segura uma. Feche as outras e recarregue.</td></tr>
+<tr><td>O robô aparece como silhueta chapada</td><td>é um aparelho sem WebGL2, um iPad antigo por exemplo. A tela cai sozinha para o desenho 2D. A pose e o tamanho continuam corretos, o que some são os vãos e os furos.</td></tr>
+<tr><td><span class="pilula p-vermelho">SEM SERVIDOR</span></td><td>a janela preta do iniciador foi fechada. Abra o iniciador de novo.</td></tr>
+<tr><td>Subiu em simulação e você queria o robô</td><td>feche o iniciador, rode de novo e escolha o modo 2 ou 3.</td></tr>
+</tbody>
+</table>
+
+<h2 id="glossario"><span class="num">7.</span>Glossário</h2>
+
+<table>
+<tbody>
+<tr><td><b>Cobot</b></td><td>robô colaborativo, feito para trabalhar sem
+grade em volta, porque para ao sentir força.</td></tr>
+<tr><td><b>TCP</b></td><td><i>Tool Center Point</i>, a ponta útil da
+ferramenta. É o ponto que anda reto quando você pede movimento linear, e o
+ponto em volta do qual a ferramenta gira.</td></tr>
+<tr><td><b>Flange</b></td><td>o disco de metal na ponta do punho 3, com os
+furos onde a ferramenta é aparafusada.</td></tr>
+<tr><td><b>Jog</b></td><td>mover o robô na mão, apertando setas, sem
+programa nenhum rodando.</td></tr>
+<tr><td><b>Freedrive</b> / <b>Teach</b></td><td>modo em que os freios soltam
+e você empurra o braço com a mão.</td></tr>
+<tr><td><b>Pose</b></td><td>a posição e a orientação da ferramenta, os seis
+números juntos.</td></tr>
+<tr><td><b>Singularidade</b></td><td>postura em que o braço perde a
+capacidade de andar em alguma direção, tipicamente com o cotovelo esticado.
+Não é defeito, é geometria.</td></tr>
+<tr><td><b>Radiano</b></td><td>unidade de ângulo. Meia volta são 3,1416
+radianos. A orientação da ferramenta aparece em radianos, e os ângulos de
+junta em graus.</td></tr>
+<tr><td><b>PolyScope</b></td><td>o programa que roda no teach pendant, com
+as abas Program, Installation, Move, I/O e Log.</td></tr>
+<tr><td><b>CB2</b></td><td>a geração do controlador deste robô, anterior ao
+CB3. Manda nos nomes dos botões que você vai encontrar.</td></tr>
+<tr><td><b>Protective stop</b></td><td>parada automática por força
+excessiva, acima de uns 150 N <sup class="ref">[1,&nbsp;3]</sup>.</td></tr>
+</tbody>
+</table>
+
+<h2 id="referencias"><span class="num">8.</span>Referências</h2>
+
+<ol class="refs">
+<li>UNIVERSAL ROBOTS A/S. <i>User Manual, UR5 with CB2</i>, versão 1.6.
+Odense, Dinamarca.
+<a class="url" href="https://s3-eu-west-1.amazonaws.com/ur-support-site/17955/manual_en_UR5_CB2_1.6.pdf">s3-eu-west-1.amazonaws.com/ur-support-site/17955/manual_en_UR5_CB2_1.6.pdf</a>
+<span class="o-que">Origem dos procedimentos de partida, inicialização das
+juntas, aba <code>Move</code>, <code>AutoMove</code>, Freedrive e
+desligamento. Conferido contra este documento, e não contra os manuais de
+CB3 ou da série e.</span></li>
+
+<li>UNIVERSAL ROBOTS A/S. <i>UR5 Technical details.</i> Folha de dados.
+<a class="url" href="https://www.universal-robots.com/media/1801303/eng_199901_ur5_tech_spec_web_a4.pdf">universal-robots.com/media/1801303/eng_199901_ur5_tech_spec_web_a4.pdf</a>
+<span class="o-que">Origem da tabela de números da seção 2.</span></li>
+
+<li>ISO 10218-1. <i>Robots and robotic devices — Safety requirements for
+industrial robots — Part 1: Robots.</i>
+<span class="o-que">Citada em [1] como a norma sob a qual a operação
+colaborativa do UR5 foi avaliada, e de onde vem o limite de força de 150 N
+mencionado na seção 1.</span></li>
+
+<li>BERTOLIN, R.; BARRETO, D. S. <i>cobot_testing_ur5_app.</i>
+<a class="url" href="https://github.com/ricardobertolin/cobot_testing_ur5_app">github.com/ricardobertolin/cobot_testing_ur5_app</a>
+<span class="o-que">Origem das poses guardadas, dos limites usados na
+validação de movimento, dos modos do servidor e do comportamento da
+tela.</span></li>
+</ol>
+
+<footer>
+<p><b>Telas deste projeto:</b>
+<a href="https://ricardobertolin.github.io/cobot_testing_ur5_app/web/pendant_dt.html">pendant + 3D</a> ·
+<a href="https://ricardobertolin.github.io/cobot_testing_ur5_app/web/diagnostico.html">diagnóstico</a> ·
+<a href="https://ricardobertolin.github.io/cobot_testing_ur5_app/">página inicial</a></p>
+<p><b>Para imprimir:</b> o
+<a href="manual-impresso.pdf">manual em PDF</a>, 17 páginas em tamanho Carta,
+com as vistas do CAD cotadas. Também dá para
+<a href="manual-impresso.html">ler na tela</a>.</p>
+<p>Detalhes técnicos, modos do servidor e configuração de rede estão no
+<a href="https://github.com/ricardobertolin/cobot_testing_ur5_app">README do
+repositório</a>.</p>
+<p><b>Referências</b> na <a href="#referencias">seção 8</a>.</p>
+
+<p><b>Marcas e direitos.</b> UR5, PolyScope, URScript e Universal Robots são
+marcas da Universal Robots A/S, citadas aqui apenas para identificar o
+equipamento descrito. Este é um documento <b>independente</b>, escrito no
+laboratório: não foi produzido, revisado, patrocinado nem endossado pela
+Universal Robots A/S, e não é documentação oficial. O texto é original, sem
+reprodução de trechos do manual do fabricante, e os valores de
+especificação são citados da folha de dados pública. <b>Havendo divergência,
+vale a documentação original</b>, que é também a que responde por segurança,
+garantia e conformidade da instalação. Os modelos de CAD usados nas figuras
+pertencem aos seus titulares e aparecem como ilustração técnica, em contexto
+de ensino e pesquisa.</p>
+
+<p>Texto, figuras e software © 2026 Ricardo Bertolin e Diego Simões Barreto,
+sob a licença MIT do repositório.</p>
+</footer>
+
+</main>
+</body>
+</html>

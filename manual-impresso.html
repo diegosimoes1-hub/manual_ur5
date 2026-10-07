@@ -1,0 +1,1680 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="icone.png">
+<title>UR5 CB2 — Manual de operação (edição impressa)</title>
+<!--
+  Edicao impressa do manual. Carta (8,5 x 11 pol), preto e branco, uma
+  pagina por <section class="pagina">.
+
+  A paginacao e explicita de proposito. Deixar o navegador quebrar sozinho
+  poe corte no meio de procedimento e figura orfa na pagina seguinte, e num
+  documento que vai para a bancada isso custa: quem esta com o pendant na
+  mao nao vira pagina para achar o passo 7. Cada pagina aqui tem altura
+  fixa, cabecalho proprio e rodape com codigo de documento, como folha de
+  fabricante.
+
+  As figuras saem do `preparar_manual.py`, que renderiza o mesmo cache de
+  malhas do CAD que o twin do navegador usa.
+
+  Para gerar o PDF: `python preparar_pdf.py`, ou Ctrl+P no navegador com
+  margens em "nenhuma" e "imprimir cores de fundo" ligado.
+-->
+<style>
+@page { size: letter; margin: 0; }
+
+html, body { margin: 0; padding: 0; background: #fff; }
+body {
+  font: 9.2pt/1.31 Arial, Helvetica, "Liberation Sans", sans-serif;
+  color: #000;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- a folha ---------- */
+.pagina {
+  position: relative;
+  width: 8.5in;
+  height: 11in;
+  padding: 0.62in 0.85in 0.52in;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overflow: hidden;
+  break-after: page;
+  page-break-after: always;
+}
+.pagina:last-child { break-after: auto; page-break-after: auto; }
+
+.corpo { flex: 1 1 auto; min-height: 0; }
+
+/* ---------- cabeçalho ---------- */
+.marca {
+  text-align: right;
+  font-weight: bold;
+  font-size: 17pt;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 5pt;
+}
+.marca span { font-weight: normal; font-size: 9pt; letter-spacing: .12em;
+              vertical-align: 3pt; margin-left: 2pt; }
+.regua { border: 0; border-top: 2.2pt solid #000; margin: 0; }
+.regua-fina { border: 0; border-top: 0.6pt solid #000; margin: 0; }
+.titulo-doc { padding: 5pt 0 6pt; }
+.titulo-doc .acima { font-size: 12pt; font-weight: bold; line-height: 1.1; }
+.titulo-doc .grande { font-size: 19pt; font-weight: bold; line-height: 1.05;
+                      letter-spacing: -0.015em; }
+.titulo-doc .caps { font-size: 13pt; font-weight: bold; line-height: 1.15;
+                    text-transform: uppercase; }
+
+/* ---------- rodapé ---------- */
+.pe { margin-top: auto; padding-top: 7pt; }
+.pe .linha { display: flex; justify-content: space-between;
+             font-size: 8.5pt; font-style: italic; padding-top: 4pt; }
+
+/* ---------- texto ---------- */
+h2 {
+  font-size: 11.5pt;
+  margin: 10pt 0 3pt;
+  line-height: 1.2;
+}
+h2::before {
+  content: "";
+  display: inline-block;
+  width: 8pt; height: 8pt;
+  background: #000;
+  margin-right: 5pt;
+  vertical-align: 0;
+}
+h3 { font-size: 9.8pt; margin: 7pt 0 2pt; }
+p { margin: 0 0 4pt; text-align: justify; text-indent: 16pt; }
+p.reto, li p { text-indent: 0; }
+h2 + p, h3 + p, .barra + p, figure + p, table + p, .caixa p { text-indent: 0; }
+
+ul, ol { margin: 0 0 6pt; padding-left: 20pt; }
+li { margin-bottom: 2pt; text-align: justify; }
+ul.limpa { list-style: none; padding-left: 8pt; }
+ul.limpa li::before { content: "• "; }
+
+ol.passos { padding-left: 17pt; }
+ol.passos li { margin-bottom: 3pt; }
+
+code, .mono { font-family: "Courier New", Courier, monospace; font-size: 9pt; }
+pre { font-family: "Courier New", Courier, monospace; font-size: 8.4pt;
+      margin: 3pt 0 5pt 16pt; line-height: 1.3; }
+
+.nota { font-style: italic; margin: 5pt 0; text-indent: 0; text-align: justify; }
+.nota b { font-style: normal; }
+
+/* ---------- barra preta de seção, como folha de fabricante ---------- */
+.barra {
+  background: #000; color: #fff;
+  text-align: center; font-weight: bold;
+  font-size: 8.9pt; letter-spacing: .05em;
+  padding: 2.1pt 0 1.9pt;
+  margin: 8pt 0 5pt;
+  text-transform: uppercase;
+}
+.barra.meia { margin-top: 0; }
+
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20pt; }
+.duas .barra { margin-top: 0; }
+.duas > div > *:first-child { margin-top: 0; }
+
+/* ---------- caixa de advertência ---------- */
+.caixa {
+  border: 1.3pt solid #000;
+  padding: 5pt 7pt 3.5pt;
+  margin: 6pt 0;
+}
+.caixa .rotulo {
+  font-weight: bold; font-size: 8.6pt; letter-spacing: .06em;
+  text-transform: uppercase; display: block; margin-bottom: 3pt;
+}
+.caixa p { margin-bottom: 3pt; text-indent: 0; }
+.caixa p:last-child { margin-bottom: 0; }
+.caixa.leve { border-width: 0.7pt; }
+
+/* ---------- tabelas ---------- */
+table { width: 100%; border-collapse: collapse; margin: 4pt 0 6pt;
+        font-size: 8.4pt; }
+table th, table td {
+  border: 0.6pt solid #000;
+  padding: 2pt 3.5pt;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.28;
+}
+table th { background: #dcdcdc; font-weight: bold; }
+table.limpa th, table.limpa td { border-left: 0; border-right: 0; }
+table td.num, table th.num { text-align: right; }
+table td.centro { text-align: center; }
+table.compacta { font-size: 8pt; }
+table.compacta th, table.compacta td { padding: 1.5pt 3pt; }
+
+/* ---------- figuras ---------- */
+figure { margin: 6pt 0 7pt; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 7.6pt; font-style: italic; margin-top: 2.5pt;
+             text-align: center; }
+figcaption b { font-style: normal; }
+figure.direita { float: right; width: 2.5in; margin: 0 0 6pt 12pt; }
+
+.capa-fig { text-align: center; margin: 14pt 0 0; }
+.capa-fig img { width: 5.0in; }
+
+/* ---------- índice ---------- */
+.indice { width: 100%; border-collapse: collapse; font-size: 9pt; }
+.indice td { border: 0; padding: 2.3pt 0; vertical-align: baseline; }
+.indice td.cod { font-family: "Courier New", monospace; font-size: 8.6pt;
+                 width: 1.5in; }
+.indice td.pg { text-align: right; width: 0.5in; }
+.indice tr.grupo td { font-weight: bold; padding-top: 9pt; }
+
+/* ---------- referências ---------- */
+ol.refs { list-style: none; padding-left: 0; margin: 4pt 0 6pt;
+          counter-reset: ref; }
+ol.refs li { counter-increment: ref; position: relative;
+             padding-left: 20pt; margin-bottom: 4pt; text-align: left; }
+ol.refs li::before { content: "[" counter(ref) "]"; position: absolute;
+                     left: 0; font-weight: bold; }
+ol.refs .url { font-family: "Courier New", monospace; font-size: 7.6pt;
+               color: #333; word-break: break-all; }
+sup.ref { font-size: 7pt; font-weight: bold; vertical-align: 2pt; }
+
+/* ---------- tela ---------- */
+@media screen {
+  body { background: #d8d8d8; padding: 18px 0; }
+  .pagina { margin: 0 auto 18px; box-shadow: 0 1px 8px rgba(0,0,0,.35); }
+  .aviso-tela {
+    max-width: 8.5in; margin: 0 auto 18px; padding: 10px 14px;
+    background: #fff; border-left: 4px solid #000; font-size: 10pt;
+  }
+  .aviso-tela a { color: #000; }
+}
+@media print { .aviso-tela { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="aviso-tela">
+<b>Edição impressa.</b> Dezessete páginas em tamanho Carta, pensadas para sair
+no papel e ficar na célula. Imprima com as margens em <b>nenhuma</b> e com
+<b>gráficos de fundo</b> ligados, ou baixe o
+<a href="manual-impresso.pdf">PDF pronto</a>. A versão para ler na tela, com
+links, é o <a href="manual.html">manual em página única</a>.
+</div>
+
+
+<!-- ============================================================
+     CAPA
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Braço robótico colaborativo</div>
+    <div class="grande">Manual de operação</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="capa-fig">
+      <img src="figuras/fig-01-vista.png" alt="Vista geral do UR5 na pose de trabalho, gerada do CAD">
+    </div>
+
+    <div style="margin-top:16pt">
+      <table class="limpa" style="font-size:9.4pt;border-top:0.6pt solid #000;border-bottom:0.6pt solid #000">
+        <tr><td style="width:1.9in"><b>Equipamento</b></td>
+            <td>UR5, Universal Robots</td></tr>
+        <tr><td><b>Controlador</b></td>
+            <td>CB2, PolyScope / URControl 1.8.25319</td></tr>
+        <tr><td><b>Aplicação</b></td>
+            <td>ensino e pesquisa em célula de laboratório</td></tr>
+        <tr><td><b>Perfil do leitor</b></td>
+            <td>operador sem experiência prévia com robôs industriais</td></tr>
+        <tr><td><b>Documento</b></td>
+            <td>edição 1, revisão A</td></tr>
+      </table>
+    </div>
+
+    <p class="reto" style="margin-top:14pt">
+    Este manual cobre as duas maneiras de operar o robô. A primeira é o
+    <i>teach pendant</i>, que é a operação oficial e a única que existe
+    quando não há computador por perto. A segunda é a tela do projeto
+    <span class="mono">cobot_testing_ur5_app</span>, que roda no navegador e
+    serve tanto para treinar em simulação quanto para acompanhar ou comandar
+    o robô real.</p>
+
+    <p class="reto">As figuras do robô não são fotografias nem desenhos
+    feitos à parte. Elas são geradas a partir do mesmo modelo de CAD e da
+    mesma cadeia cinemática que o gêmeo digital do projeto usa, o que
+    garante que a pose, as proporções e as cotas impressas aqui concordam
+    com o que a tela mostra.</p>
+
+    <p class="nota" style="margin-top:auto"><b>UR5</b>, <b>PolyScope</b> e
+    <b>Universal Robots</b> são marcas da Universal Robots A/S. Documento
+    independente, não produzido nem endossado pela Universal Robots A/S, e
+    que não substitui a documentação oficial do fabricante. Detalhe na
+    página 17.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_MAN_0000</span><span>1 of 1</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ÍNDICE
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Manual de operação</div>
+    <div class="grande">Índice e convenções</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <h2>Como este manual está organizado</h2>
+    <p>O manual é uma coleção de documentos curtos, cada um com o próprio
+    código no rodapé e a própria numeração de páginas. Quem precisa só de
+    uma parte arranca ou imprime só aquela parte, sem carregar o
+    resto.</p>
+
+    <table class="indice">
+      <tr class="grupo"><td class="cod">UR5_CB2_TD_0100</td>
+        <td>Ficha técnica: o robô, as juntas e o espaço de trabalho</td>
+        <td class="pg">3</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Descrição, características e identificação das juntas</td><td class="pg">3</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Especificações e envelope de trabalho</td><td class="pg">4</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Cadeia cinemática e singularidade</td><td class="pg">5</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Poses de referência e leitura da posição</td><td class="pg">6</td></tr>
+
+      <tr class="grupo"><td class="cod">UR5_CB2_AN_0200</td>
+        <td>Nota de aplicação: segurança e estados do robô</td>
+        <td class="pg">7</td></tr>
+      <tr><td></td><td style="padding-left:12pt">As seis regras e os três tipos de parada</td><td class="pg">7</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Modos do robô e o que cada um exige</td><td class="pg">8</td></tr>
+
+      <tr class="grupo"><td class="cod">UR5_CB2_OP_0300</td>
+        <td>Operação pelo teach pendant</td>
+        <td class="pg">9</td></tr>
+      <tr><td></td><td style="padding-left:12pt">O pendant e o procedimento de partida</td><td class="pg">9</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Inicialização das juntas e tela inicial</td><td class="pg">10</td></tr>
+      <tr><td></td><td style="padding-left:12pt">A aba Move</td><td class="pg">11</td></tr>
+      <tr><td></td><td style="padding-left:12pt">AutoMove, Freedrive, programas e desligamento</td><td class="pg">12</td></tr>
+
+      <tr class="grupo"><td class="cod">UR5_CB2_OP_0400</td>
+        <td>Operação pela tela do navegador</td>
+        <td class="pg">13</td></tr>
+      <tr><td></td><td style="padding-left:12pt">A tela, o jog e os referenciais</td><td class="pg">13</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Indicador de conexão e modos do servidor</td><td class="pg">14</td></tr>
+
+      <tr class="grupo"><td class="cod">UR5_CB2_RR_0500</td>
+        <td>Referência rápida</td>
+        <td class="pg">15</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Equivalência entre os dois controles e diagnóstico</td><td class="pg">15</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Glossário e sobre as figuras</td><td class="pg">16</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Referências, marcas e créditos</td><td class="pg">17</td></tr>
+    </table>
+
+    <h2>Convenções</h2>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>Caixa com moldura grossa. Marca a informação cuja falta machuca
+      alguém ou danifica o robô. São poucas, e todas foram colocadas onde o
+      erro é comum, não onde é teoricamente possível.</p>
+    </div>
+
+    <div class="caixa leve">
+      <span class="rotulo">Observação</span>
+      <p>Caixa com moldura fina. Marca a informação que evita perder tempo,
+      tipicamente um comportamento do CB2 que surpreende quem veio de
+      outra geração de controlador.</p>
+    </div>
+
+    <p class="reto"><code>Texto em monoespaçado</code> é literal: nome de
+    botão que aparece na tela, comando digitado, endereço. Nome de botão do
+    PolyScope fica no inglês original, porque é assim que está no
+    equipamento.</p>
+
+    <p class="nota"><b>NOTA:</b> as telas descritas neste manual são as do
+    PolyScope 1.8 em controlador CB2. Nas gerações seguintes, CB3 e série e,
+    vários botões mudaram de nome ou deixaram de existir. Instrução escrita
+    para CB3 não se aplica a este robô.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_MAN_0001</span><span>1 of 1</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FICHA TÉCNICA — 1 de 3
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="grande">UR5</div>
+    <div class="caps">Braço robótico colaborativo de seis eixos</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="duas">
+      <div>
+        <div class="barra meia">Descrição</div>
+        <p>O UR5 é um braço de seis juntas rotativas em tubo de alumínio,
+        com alcance de 850 mm e carga útil de 5 kg. Não há trilho, pistão
+        nem eixo linear: todo movimento vem de girar seis motores de forma
+        coordenada, e é a coordenação entre eles que leva a ferramenta ao
+        ponto desejado.</p>
+
+        <p>É classificado como robô colaborativo porque o controlador
+        monitora o torque de cada junta e gera uma parada de proteção
+        quando encontra resistência. Isso permite operar sem grade em
+        volta, desde que a avaliação de risco da célula conclua que a
+        instalação inteira é segura, incluindo a ferramenta montada na
+        ponta.</p>
+
+        <p>A unidade deste laboratório usa o controlador <b>CB2</b>, a
+        primeira geração da linha, com PolyScope 1.8.25319.</p>
+      </div>
+
+      <div>
+        <div class="barra meia">Características</div>
+        <ul class="limpa">
+          <li>6 juntas rotativas, todas com curso de &plusmn;360°</li>
+          <li>Alcance de 850 mm e carga de 5 kg</li>
+          <li>Repetibilidade de &plusmn;0,1 mm</li>
+          <li>Braço de 18,4 kg, movido por uma pessoa</li>
+          <li>Guiagem manual por Freedrive</li>
+          <li>Parada de proteção por limite de força</li>
+          <li>Programação pela tela, sem digitar código</li>
+        </ul>
+
+        <p class="nota" style="margin-top:2pt"><b>NOTA:</b> a carga de 5 kg
+        inclui o peso da garra, não só o da peça. Uma garra pneumática de
+        1,8 kg deixa 3,2 kg para a peça, e esse é o número que entra na
+        configuração de <code>Installation</code>.</p>
+      </div>
+    </div>
+
+    <div class="barra">Identificação das juntas</div>
+
+    <figure>
+      <img src="figuras/fig-02-juntas.png" alt="Vista do UR5 com as seis juntas identificadas por linhas de chamada" style="width:5.25in">
+      <figcaption><b>Figura 1.</b> As seis juntas, da base para a ponta.
+      Vista gerada do modelo de CAD na pose [0, &minus;70, 100, &minus;120,
+      &minus;90, 0].</figcaption>
+    </figure>
+
+    <table class="compacta">
+      <tr>
+        <th style="width:0.45in">Junta</th>
+        <th style="width:1.0in">No pendant</th>
+        <th style="width:1.0in">Nesta tela</th>
+        <th>Movimento que produz</th>
+      </tr>
+      <tr><td class="centro">J1</td><td>Base</td><td>Base</td>
+          <td>gira o braço inteiro em volta do pedestal</td></tr>
+      <tr><td class="centro">J2</td><td>Shoulder</td><td>Ombro</td>
+          <td>levanta e abaixa o braço todo</td></tr>
+      <tr><td class="centro">J3</td><td>Elbow</td><td>Cotovelo</td>
+          <td>dobra o braço no meio</td></tr>
+      <tr><td class="centro">J4</td><td>Wrist 1</td><td>Punho 1</td>
+          <td>inclina o punho</td></tr>
+      <tr><td class="centro">J5</td><td>Wrist 2</td><td>Punho 2</td>
+          <td>gira o punho de lado</td></tr>
+      <tr><td class="centro">J6</td><td>Wrist 3</td><td>Punho 3</td>
+          <td>gira a flange onde a ferramenta é aparafusada</td></tr>
+    </table>
+
+    <p class="reto">Cada junta percorre uma volta inteira para cada lado a
+    partir do zero. Ao chegar no limite ela para de girar naquele sentido, e
+    a única saída é voltar. A aba <code>Move</code> do pendant mostra o
+    curso de cada junta como uma barra horizontal, e é ali que se vê de
+    relance qual delas está no fim.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_TD_0100</span><span>1 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FICHA TÉCNICA — 2 de 3
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="grande">UR5</div>
+    <div class="caps">Especificações e espaço de trabalho</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">Especificações</div>
+
+    <div class="duas" style="gap:0 16pt">
+      <div>
+        <table class="compacta">
+          <tr><th colspan="2">Desempenho</th></tr>
+          <tr><td>Carga útil</td><td class="num">5 kg</td></tr>
+          <tr><td>Alcance</td><td class="num">850 mm</td></tr>
+          <tr><td>Repetibilidade</td><td class="num">&plusmn;0,1 mm</td></tr>
+          <tr><td>Graus de liberdade</td><td class="num">6</td></tr>
+          <tr><td>Curso por junta</td><td class="num">&plusmn;360°</td></tr>
+          <tr><td>Velocidade de junta</td><td class="num">180°/s</td></tr>
+          <tr><td>Velocidade da ponta</td><td class="num">1 m/s</td></tr>
+
+          <tr><th colspan="2">Físico</th></tr>
+          <tr><td>Peso do braço, com cabo</td><td class="num">18,4 kg</td></tr>
+          <tr><td>Diâmetro da base</td><td class="num">Ø149 mm</td></tr>
+          <tr><td>Fixação</td><td class="num">4 &times; M8</td></tr>
+          <tr><td>Rosca do conector de ferramenta</td><td class="num">M8</td></tr>
+          <tr><td>Cabo do braço</td><td class="num">6 m</td></tr>
+          <tr><td>Material</td><td class="num">alumínio e PP</td></tr>
+        </table>
+      </div>
+
+      <div>
+        <table class="compacta">
+          <tr><th colspan="2">Ambiente e energia</th></tr>
+          <tr><td>Grau de proteção, braço</td><td class="num">IP54</td></tr>
+          <tr><td>Grau de proteção, caixa e pendant</td><td class="num">IP20</td></tr>
+          <tr><td>Temperatura de trabalho</td><td class="num">0 a 50 °C</td></tr>
+          <tr><td>Consumo, mínimo e típico</td><td class="num">90 e 150 W</td></tr>
+          <tr><td>Consumo, pico</td><td class="num">325 W</td></tr>
+          <tr><td>Ruído</td><td class="num">&lt; 65 dB(A)</td></tr>
+
+          <tr><th colspan="2">Entradas e saídas</th></tr>
+          <tr><td>Na ferramenta, digitais</td><td class="num">2 in / 2 out</td></tr>
+          <tr><td>Na ferramenta, analógicas</td><td class="num">2 in</td></tr>
+          <tr><td>Alimentação na ferramenta</td><td class="num">12 ou 24 V, 600 mA</td></tr>
+          <tr><td>Na caixa, digitais</td><td class="num">16 in / 16 out</td></tr>
+          <tr><td>Na caixa, analógicas</td><td class="num">2 in / 2 out</td></tr>
+          <tr><td>Rede</td><td class="num">Ethernet 100 Mbit</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <p class="nota"><b>NOTA:</b> valores da folha de dados do fabricante
+    para o braço UR5 <sup class="ref">[2]</sup>. Os limites de junta, o
+    alcance e as velocidades máximas são os mesmos que o software deste
+    projeto usa para validar movimento antes de enviar ao controlador
+    <sup class="ref">[4]</sup>.</p>
+
+    <div class="barra">Envelope de trabalho</div>
+
+    <figure style="margin-top:4pt">
+      <img src="figuras/fig-04-envelope.png" alt="Corte vertical do envelope de trabalho, esfera de 850 mm e coluna central a evitar" style="width:4.3in">
+      <figcaption><b>Figura 2.</b> Envelope em corte vertical. A esfera de
+      850 mm é o alcance nominal, e a coluna tracejada é a região a
+      evitar.</figcaption>
+    </figure>
+
+    <p class="reto">A região a evitar não é uma proibição do controlador,
+    e sim uma consequência do formato do braço. Perto do eixo da base, uma
+    variação pequena da posição da ferramenta exige uma rotação grande da
+    junta J1. O robô fica rápido e nervoso enquanto a ponta quase não sai do
+    lugar, e o resultado é um movimento que assusta e que desgasta a junta
+    à toa. Em operação normal, não faça a ferramenta passar por cima da
+    própria base.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_TD_0100</span><span>2 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FICHA TÉCNICA — 3 de 3
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="grande">UR5</div>
+    <div class="caps">Cadeia cinemática e singularidade</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <figure class="direita" style="width:3.4in">
+      <img src="figuras/fig-03-cotas.png" alt="Vista lateral cotada do UR5 na pose Vertical, com d1, a2, a3 e d5">
+      <figcaption style="text-align:left"><b>Figura 3.</b> Cotas da cadeia,
+      em milímetros, na pose Vertical.</figcaption>
+    </figure>
+
+    <h2>As cotas</h2>
+
+    <p>Seis medidas descrevem a geometria inteira. São elas que convertem
+    ângulo de junta em posição da ferramenta.</p>
+
+    <table class="compacta" style="width:2.75in">
+      <tr><th>Cota</th><th class="num">mm</th><th>Entre</th></tr>
+      <tr><td>d1</td><td class="num">89,159</td><td>base e ombro</td></tr>
+      <tr><td>a2</td><td class="num">425,00</td><td>ombro e cotovelo</td></tr>
+      <tr><td>a3</td><td class="num">392,25</td><td>cotovelo e punho 1</td></tr>
+      <tr><td>d4</td><td class="num">109,15</td><td>desvio lateral</td></tr>
+      <tr><td>d5</td><td class="num">94,65</td><td>punho 1 e punho 3</td></tr>
+      <tr><td>d6</td><td class="num">82,30</td><td>punho 3 e flange</td></tr>
+    </table>
+
+    <p class="reto">O d4 e o d6 saem de lado, perpendiculares ao plano da
+    Figura 3, e por isso não aparecem como cota vertical ali. São eles que
+    tiram a ferramenta de cima do eixo do antebraço, o que é o que dá ao
+    punho liberdade de apontar em qualquer direção.</p>
+
+    <h2>Singularidade</h2>
+
+    <p>Existem posturas em que o braço perde a capacidade de se mover em
+    alguma direção. A mais fácil de encontrar é a pose Vertical, com o
+    cotovelo esticado e o punho alinhado.</p>
+
+    <p>Pedir movimento ao longo do próprio braço, ali, exigiria velocidade
+    infinita em alguma junta, e tanto o controlador quanto o software deste
+    projeto recusam.</p>
+
+    <p>Não é defeito nem travamento, é geometria, e a saída é sempre a
+    mesma: <b>dobre o cotovelo</b>.</p>
+
+    <div style="clear:both"></div>
+
+    <p class="nota">Essa é a razão de a tela do projeto nascer na pose
+    Trabalho, e não na Vertical: quem abre a tela e aperta a seta de
+    <code>Z</code> numa singularidade conclui que o programa quebrou.</p>
+
+    <div class="barra">Fixação e flange</div>
+
+    <div class="duas">
+      <div>
+        <p class="reto">O braço é fixado por <b>quatro parafusos M8</b> nos
+        quatro furos de 8,5 mm da base. Há ainda dois furos de Ø8 para
+        pinos de guia, que existem para quando o robô precisa ser
+        removido e recolocado exatamente na mesma posição, sem reensinar as
+        posições do programa.</p>
+      </div>
+      <div>
+        <p class="reto">A ferramenta é aparafusada na <b>flange</b>, na
+        ponta do punho 3, que tem quatro furos e o conector M8 das ligações
+        elétricas. A superfície de fixação precisa ser firme: base flexível
+        vira vibração, e vibração aparece como perda de repetibilidade.</p>
+      </div>
+    </div>
+
+    <div class="caixa leve">
+      <span class="rotulo">Observação</span>
+      <p>A orientação de montagem precisa ser informada em
+      <code>Installation</code> &rarr; <code>Mounting</code>. Ela serve a
+      dois propósitos: fazer o robô aparecer na posição certa no desenho da
+      tela e, muito mais importante, informar ao controlador a direção da
+      gravidade. Com a direção errada, a compensação de peso fica errada, e
+      o sintoma aparece no Freedrive como um braço que cai.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_TD_0100</span><span>3 of 4</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FICHA TÉCNICA — 4 de 4
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="grande">UR5</div>
+    <div class="caps">Poses de referência e leitura da posição</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">Poses de referência</div>
+
+    <figure style="margin-top:2pt">
+      <img src="figuras/fig-05-poses.png" alt="As três poses guardadas: Zero, Vertical e Trabalho, na mesma escala" style="width:5.85in">
+      <figcaption><b>Figura 4.</b> As três poses guardadas no software do
+      projeto.</figcaption>
+    </figure>
+
+    <table class="compacta">
+      <tr><th style="width:0.9in">Pose</th><th style="width:2.0in">Ângulos</th><th>Para que serve</th></tr>
+      <tr><td><b>Zero</b></td><td class="mono">0, 0, 0, 0, 0, 0</td>
+          <td>referência de calibração. Braço deitado, estendido na horizontal.</td></tr>
+      <tr><td><b>Vertical</b></td><td class="mono">0, &minus;90, 0, &minus;90, 0, 0</td>
+          <td>braço esticado para cima. É a pose do CAD, e é uma singularidade.</td></tr>
+      <tr><td><b>Trabalho</b></td><td class="mono">0, &minus;60, 90, &minus;120, &minus;90, 0</td>
+          <td>cotovelo dobrado, longe de singularidade. Pose de partida da tela.</td></tr>
+    </table>
+
+    <div class="barra">Como ler a posição na tela</div>
+
+    <p>Tanto o pendant quanto a tela do navegador mostram a posição da
+    ferramenta como seis números. Os três primeiros são fáceis. Os três
+    últimos confundem quase todo mundo na primeira vez.</p>
+
+    <table class="compacta">
+      <tr><th style="width:1.1in">Campo</th><th style="width:0.75in">Unidade</th>
+          <th>O que é</th></tr>
+      <tr><td><code>X Y Z</code></td><td>mm</td>
+          <td>onde a ponta da ferramenta está, em relação à base do robô.
+          <code>Z</code> é altura.</td></tr>
+      <tr><td><code>RX RY RZ</code></td><td>rad</td>
+          <td>para onde a ferramenta está apontando, como vetor de rotação.
+          Não são três ângulos independentes.</td></tr>
+    </table>
+
+    <p class="reto">O vetor de rotação é um jeito compacto de guardar uma
+    orientação: a direção do vetor é o eixo em torno do qual girar, e o
+    comprimento dele é quanto girar, em radianos. Meia volta são 3,1416.
+    Por isso um valor como <code>RY = &minus;3,1416</code> quer dizer
+    "ferramenta virada de cabeça para baixo", e não "gire o eixo Y em três
+    unidades".</p>
+
+    <p class="nota"><b>NOTA:</b> na prática quase ninguém digita esses
+    valores à mão. Eles servem para conferir que o robô está onde se espera
+    e para anotar uma posição que se quer reproduzir depois. Para mover,
+    use as setas.</p>
+
+    <div class="caixa leve">
+      <span class="rotulo">Observação</span>
+      <p>Os seis números descrevem a <b>flange</b> quando não há offset de
+      ferramenta configurado. Depois de configurar o TCP em
+      <code>Installation</code>, eles passam a descrever a ponta da
+      ferramenta, que é o que interessa em operação. Mudar o TCP muda todos
+      os números na tela sem que o robô tenha se mexido.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_TD_0100</span><span>4 of 4</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SEGURANÇA — 1 de 2
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Nota de aplicação 0200</div>
+    <div class="grande">Segurança na operação</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>O UR5 para sozinho ao encostar em algo. Isso não quer dizer que ele
+      seja inofensivo. Com ferramenta pontuda na ponta, ou com peça pesada
+      na garra, ele machuca. <b>Não fique dentro do alcance do braço com o
+      robô ligado sem ter a parada de emergência ao alcance da mão.</b></p>
+    </div>
+
+    <h2>As seis regras</h2>
+
+    <ol class="passos">
+      <li><b>A parada de emergência é o botão vermelho de cogumelo do teach
+      pendant.</b> Soco nele e a potência das juntas cai. Para destravar,
+      gire o botão no sentido da seta gravada nele e reinicie o robô pela
+      tela.</li>
+
+      <li><b>Toda tecla de movimento é tecla presa, não clique.</b> O robô
+      anda enquanto o dedo está em cima e para quando o dedo sai. Vale no
+      pendant e vale na tela do navegador. Para parar, tire o dedo.</li>
+
+      <li><b>O robô não desvia de nada sozinho.</b> Ele não sabe que existe
+      uma mesa, uma bancada ou o seu braço. Ele bate, sente a força e para.
+      Bater é ruim para o robô e pior para quem está na frente.</li>
+
+      <li><b>Olhe para o robô, não para a tela, enquanto ele se move.</b> A
+      tela mostra números. O robô mostra se vai bater.</li>
+
+      <li><b>Comece devagar.</b> De 20% a 30% é o que se usa para aprender.
+      Não há motivo para subir disso enquanto você não souber exatamente
+      para onde o braço vai.</li>
+
+      <li><b>Na dúvida, simule.</b> A tela do projeto, sem robô do outro
+      lado, faz os mesmos movimentos sem consequência. O próprio PolyScope
+      também tem um botão de simulação para programas.</li>
+    </ol>
+
+    <h2>Três paradas diferentes, três soluções diferentes</h2>
+
+    <p>As três travam o braço, e quem está começando tende a tratar todas
+    como a mesma coisa. Não são. Cada uma tem uma origem e um jeito próprio
+    de destravar, e confundi-las custa tempo na célula.</p>
+
+    <table>
+      <tr>
+        <th style="width:1.35in">Parada</th>
+        <th style="width:2.0in">De onde vem</th>
+        <th>Como sair</th>
+      </tr>
+      <tr>
+        <td><b>Emergência</b><br><span style="font-size:8pt">emergency stop</span></td>
+        <td>alguém apertou o botão vermelho, no pendant ou em botoeira
+        externa ligada à caixa</td>
+        <td>gire o botão para destravar, depois <code>ON</code> e
+        <code>Start</code> na tela de inicialização</td>
+      </tr>
+      <tr>
+        <td><b>Proteção</b><br><span style="font-size:8pt">protective stop</span></td>
+        <td>o robô encontrou resistência acima do limite de força, que é
+        inferior a 150 N <sup class="ref">[1,&nbsp;3]</sup></td>
+        <td>veja no que ele encostou, afaste o obstáculo e destrave pela
+        mensagem na tela</td>
+      </tr>
+      <tr>
+        <td><b>Segurança</b><br><span style="font-size:8pt">safeguard stop</span></td>
+        <td>um dispositivo externo da célula abriu o circuito: cortina de
+        luz, tapete, porta de grade</td>
+        <td>restabeleça a condição do dispositivo. O robô volta quando o
+        circuito fechar.</td>
+      </tr>
+    </table>
+
+    <p class="nota"><b>NOTA:</b> a parada de emergência é a única das três
+    que não tem substituto em software. É por isso que este manual repete
+    que o pendant fica ao alcance da mão mesmo quando quem comanda é a tela
+    do navegador.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_AN_0200</span><span>1 of 2</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SEGURANÇA — 2 de 2
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Nota de aplicação 0200</div>
+    <div class="grande">Estados do robô</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>O controlador mantém o robô em um de vários estados, e a maior parte
+    das perguntas do tipo "por que ele não anda" se responde sabendo em qual
+    deles ele está. O estado aparece na tela do pendant, e o software deste
+    projeto lê o mesmo valor pela rede.</p>
+
+    <table class="compacta">
+      <tr>
+        <th style="width:1.5in">Estado</th>
+        <th style="width:2.1in">O que significa</th>
+        <th>Anda?</th>
+      </tr>
+      <tr><td class="mono">NO_POWER</td><td>controlador ligado, juntas sem potência</td><td>não. Falta <code>ON</code>.</td></tr>
+      <tr><td class="mono">READY</td><td>com potência, freios ainda travados</td><td>não. Falta <code>Start</code>.</td></tr>
+      <tr><td class="mono">INITIALIZING</td><td>juntas procurando a própria posição</td><td>só pela tela de inicialização</td></tr>
+      <tr><td class="mono">RUNNING</td><td>pronto para operar</td><td>sim</td></tr>
+      <tr><td class="mono">FREEDRIVE</td><td>freios soltos para guiagem manual</td><td>na mão, não por comando</td></tr>
+      <tr><td class="mono">SECURITY_STOPPED</td><td>parada de proteção por força</td><td>não, até destravar</td></tr>
+      <tr><td class="mono">EMERGENCY_STOPPED</td><td>botão vermelho apertado</td><td>não, até destravar</td></tr>
+      <tr><td class="mono">SAFEGUARD_STOP</td><td>dispositivo externo da célula abriu</td><td>não, até fechar</td></tr>
+      <tr><td class="mono">FATAL_ERROR</td><td>falha do controlador</td><td>não. Reinicie, e persistindo é manutenção.</td></tr>
+    </table>
+
+    <h2>Uma armadilha que custa tempo</h2>
+
+    <p>Script enviado ao controlador com o robô sem potência, ou em parada
+    de proteção, <b>é aceito pelo socket e silenciosamente ignorado</b>.
+    Não há erro, não há aviso, e do lado do computador tudo indica que o
+    movimento foi executado. Nada aconteceu.</p>
+
+    <p>É por isso que o software deste projeto verifica o estado do robô
+    antes de abrir qualquer canal de comando, e por isso a tela mostra uma
+    pílula amarela dizendo <code>ROBÔ NÃO PRONTO</code> em vez de deixar o
+    operador apertar setas que não fazem nada. Uma tecla que existe e não
+    funciona é pior que a ausência dela, porque o operador aperta, o robô
+    não anda, e a dúvida passa a ser se o robô travou.</p>
+
+    <h2>O que o robô faz por conta própria</h2>
+
+    <ul>
+      <li><b>Limita o torque de cada junta</b> em baixo nível, permitindo
+      apenas um desvio pequeno do torque esperado para aquele movimento.</li>
+      <li><b>Gera parada de proteção</b> quando a força de contato passa do
+      limite, que é inferior a 150 N <sup class="ref">[1]</sup>.</li>
+      <li><b>Recusa executar programa</b> quando a orientação de montagem
+      configurada não corresponde à montagem real, porque a compensação de
+      gravidade estaria errada.</li>
+      <li><b>Trava os freios</b> ao perder energia, o que evita que o braço
+      caia.</li>
+    </ul>
+
+    <h2>O que continua sendo responsabilidade de quem opera</h2>
+
+    <ul>
+      <li>A <b>ferramenta</b> montada na ponta. O robô é liso e arredondado
+      de propósito, uma agulha na garra não é.</li>
+      <li>O <b>peso configurado</b> em <code>Installation</code>. Peso
+      errado faz o braço cair ao entrar em Freedrive.</li>
+      <li>O <b>caminho</b> do movimento. Nem o pendant nem a tela conferem
+      se há obstáculo entre onde o robô está e onde ele vai.</li>
+      <li>A <b>célula em volta</b>. A certificação do braço não certifica a
+      instalação. A avaliação de risco é da instalação inteira.</li>
+    </ul>
+
+    <div class="caixa leve">
+      <span class="rotulo">Observação</span>
+      <p>Durante a inicialização das juntas o robô não desvia de nada, nem
+      de si mesmo. Se o braço estiver encostado numa mesa ou dentro de uma
+      máquina, acionar o movimento automático pode empurrá-lo contra o
+      obstáculo e danificar a caixa de engrenagens. Nesse caso, dirija as
+      juntas uma a uma pelas setas.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_AN_0200</span><span>2 of 2</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     PENDANT — 1 de 4
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Guia de operação 0300</div>
+    <div class="grande">O teach pendant e a partida</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>Esta é a operação oficial do robô, e é a que vale quando não há
+    computador por perto. Tudo neste documento acontece no teach pendant,
+    que é a caixa com tela de toque ligada por cabo à caixa de controle.</p>
+
+    <div class="barra">Controles físicos</div>
+
+    <figure style="margin-top:2pt">
+      <img src="figuras/fig-06-pendant.png" alt="Desenho esquemático do teach pendant do CB2, com emergência, botão de energia e o Freedrive no verso" style="width:3.9in">
+      <figcaption><b>Figura 5.</b> O pendant do CB2 é deitado, com a tela
+      ocupando quase toda a frente e os dois botões numa faixa à
+      direita.</figcaption>
+    </figure>
+
+    <table class="compacta">
+      <tr><th style="width:0.4in"></th><th style="width:1.55in">Controle</th>
+          <th style="width:1.15in">Onde</th><th>Função</th></tr>
+      <tr><td class="centro">1</td><td><b>Parada de emergência</b></td>
+          <td>faixa da direita, logo abaixo do botão de energia</td>
+          <td>cogumelo vermelho com colar amarelo, marcado
+          <code>E-STOP</code>. Corta a potência das juntas e destrava
+          girando o botão.</td></tr>
+      <tr><td class="centro">2</td><td><b>Botão de energia</b></td>
+          <td>canto superior direito</td>
+          <td>botão redondo embutido. Liga a caixa de controle e o
+          PolyScope, e é o mesmo que desliga.</td></tr>
+      <tr><td class="centro">3</td><td><b>Freedrive</b> (ou <b>Teach</b>)</td>
+          <td><b>no verso</b></td>
+          <td>segurando, os freios soltam e o braço pode ser guiado com a
+          mão.</td></tr>
+    </table>
+
+    <div class="barra">Procedimento de partida</div>
+
+    <ol class="passos">
+      <li><b>Confira o entorno.</b> Ninguém dentro do alcance do braço, e
+      nenhuma ferramenta, peça ou cabo no caminho.</li>
+
+      <li><b>Aperte o botão de energia do pendant.</b> A tela acende e mostra
+      texto rolando. A partida leva cerca de um minuto, e isso é normal.</li>
+
+      <li><b>Se aparecer o aviso de emergência apertada</b>, toque em
+      <code>To Initialization Screen</code> e destrave o botão vermelho
+      girando. O estado muda de <code>Emergency Stopped</code> para
+      <code>Robot Power Off</code>.</li>
+
+      <li><b>Toque em <code>ON</code>.</b> Espere alguns segundos. Isso dá
+      energia aos motores, mas os freios continuam travados.</li>
+
+      <li><b>Toque em <code>Start</code>.</b> O robô faz um barulho seco e
+      se move um pouco: são os freios soltando. O barulho é esperado.</li>
+
+      <li><b>Inicialize as juntas</b>, que é o procedimento da página
+      seguinte.</li>
+    </ol>
+
+    <div class="caixa leve">
+      <span class="rotulo">Observação</span>
+      <p>O <code>ON</code> e o <code>Start</code> são dois passos separados
+      de propósito, e não um botão só com atraso. Entre um e outro o robô
+      tem potência e freio travado, que é o estado em que dá para acionar o
+      recuo manual descrito na página 12 sem que o braço ande por
+      comando.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_OP_0300</span><span>1 of 4</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     PENDANT — 2 de 4
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Guia de operação 0300</div>
+    <div class="grande">Inicialização e tela inicial</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <h2>Por que inicializar</h2>
+
+    <p>Ligado não é o mesmo que pronto <sup class="ref">[1]</sup>. Ao
+    receber energia, o robô <b>não sabe onde as juntas estão</b>. Cada junta precisa girar um pouco,
+    cerca de 20 graus, até passar por uma marca que ela reconhece. As juntas
+    grandes têm perto de 20 dessas marcas ao longo de uma volta, e as
+    pequenas cerca de 10, então o giro necessário costuma ser curto.</p>
+
+    <h2>As seis luzes</h2>
+
+    <p>A tela de inicialização mostra uma luz por junta. As seis precisam
+    estar verdes para o robô operar normalmente.</p>
+
+    <table>
+      <tr><th style="width:1.0in">Luz</th><th>Significado</th><th style="width:2.1in">Ação</th></tr>
+      <tr><td><b>Vermelha</b></td>
+          <td>a junta está parada, e por algum motivo não gira</td>
+          <td>verifique emergência e potência. Persistindo, é falha da junta.</td></tr>
+      <tr><td><b>Amarela</b></td>
+          <td>a junta está viva, mas ainda não sabe onde está</td>
+          <td>é o estado normal antes de inicializar. Siga abaixo.</td></tr>
+      <tr><td><b>Verde</b></td>
+          <td>a junta está pronta</td>
+          <td>nenhuma</td></tr>
+    </table>
+
+    <h2>Dois caminhos, os dois com o botão pressionado</h2>
+
+    <ol class="passos">
+      <li><b>Automático.</b> Segure o botão <code>Auto</code> e mantenha
+      pressionado. O robô dirige as juntas até que fiquem prontas. Soltando
+      e apertando de novo, ele inverte o sentido de giro. Existe um
+      <code>Auto</code> geral e um por junta.</li>
+
+      <li><b>Manual.</b> Dirija cada junta pelas setas azuis da linha dela.
+      Use quando o braço estiver encostado em algo e o movimento automático
+      puder empurrá-lo contra o obstáculo.</li>
+    </ol>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>Durante a inicialização o robô não evita colisão consigo mesmo nem
+      com o ambiente. Olhe para o braço, e não para a tela, enquanto dirige
+      as juntas. Forçar uma junta contra um obstáculo danifica a caixa de
+      engrenagens.</p>
+    </div>
+
+    <p class="reto">Com as seis luzes verdes, toque no botão de sair e a
+    tela inicial aparece.</p>
+
+    <div class="barra">Tela inicial</div>
+
+    <table>
+      <tr><th style="width:1.7in">Botão</th><th>O que faz</th></tr>
+      <tr><td><code>Run Program</code></td>
+          <td>executa um programa que já existe. É a forma mais simples e
+          mais segura de operar, porque o caminho já foi testado.</td></tr>
+      <tr><td><code>Program Robot</code></td>
+          <td>cria ou altera um programa. É por aqui que se chega nas abas
+          <code>Move</code>, <code>I/O</code>, <code>Installation</code> e
+          <code>Log</code>.</td></tr>
+      <tr><td><code>Setup Robot</code><br><span style="font-size:8pt">em algumas versões só <code>Setup</code></span></td>
+          <td>senha, idioma, atualização, calibração do toque e configuração
+          de rede.</td></tr>
+      <tr><td><code>Shut Down Robot</code></td>
+          <td>desliga o controlador e o robô, do jeito certo.</td></tr>
+    </table>
+
+    <p class="nota"><b>NOTA:</b> a tela de inicialização continua acessível
+    depois, por <code>Setup Robot</code> &rarr; <code>Initialize Robot</code>.
+    É por lá que se chega ao botão <code>OFF</code>, que corta a potência
+    das juntas sem desligar o controlador.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_OP_0300</span><span>2 of 4</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     PENDANT — 3 de 4
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Guia de operação 0300</div>
+    <div class="grande">Mover o robô: a aba Move</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>Caminho: <code>Program Robot</code>, depois a aba <code>Move</code>.
+    À esquerda o robô em 3D, à direita a posição da ferramenta e os ângulos
+    das juntas.</p>
+
+    <figure style="margin:4pt 0 6pt">
+      <img src="figuras/fig-07-move.png" alt="Mapa esquemático da aba Move do PolyScope" style="width:5.2in">
+      <figcaption><b>Figura 6.</b> Onde fica cada coisa na aba
+      <code>Move</code>. Esquemático: as posições exatas variam com a versão
+      do PolyScope.</figcaption>
+    </figure>
+
+    <h2>Move Tool: mover a ponta</h2>
+
+    <ul>
+      <li><b>Setas retas, em cima.</b> Seguradas, levam a ponta da
+      ferramenta na direção indicada, em linha reta.</li>
+      <li><b>Setas curvas, embaixo.</b> Giram a ferramenta em volta da
+      própria ponta, sem tirá-la do lugar. O ponto de giro é o TCP,
+      desenhado como uma bolinha azul no gráfico 3D.</li>
+      <li><b>Soltar a seta para o movimento na hora.</b></li>
+    </ul>
+
+    <h2>Feature: em relação a quê</h2>
+
+    <p>No alto à direita, o seletor <code>Feature</code> decide em relação a
+    que referencial as setas andam. É a confusão mais comum de quem está
+    começando.</p>
+
+    <table>
+      <tr><th style="width:0.9in">Feature</th><th>Como as setas se comportam</th></tr>
+      <tr><td><code>Base</code></td>
+          <td>o <code>Z</code> aponta para cima, sempre, não importa como a
+          ferramenta esteja virada. É o referencial do chão.</td></tr>
+      <tr><td><code>Tool</code></td>
+          <td>o <code>Z</code> aponta para onde a ferramenta está olhando.
+          Com a garra virada para baixo, <code>Z+</code> desce.</td></tr>
+      <tr><td><code>View</code></td>
+          <td>as setas andam em relação ao que você vê no gráfico 3D. Gire o
+          desenho até coincidir com a sua vista do robô real e a seta para a
+          direita move o robô para a direita aos seus olhos.</td></tr>
+    </table>
+
+    <p class="nota"><b>Regra prática:</b> Base para se localizar, Tool para
+    encostar, View para quem ainda confunde os eixos.</p>
+
+    <h2>Move Joints: girar uma junta só</h2>
+
+    <p>Cada junta tem uma barra horizontal, que é o curso de &minus;360° a
+    +360°, e uma seta para cada lado. No limite ela não gira mais naquele
+    sentido. Os valores também podem ser digitados: toque no número e o
+    teclado de tela aparece.</p>
+
+    <p class="nota"><b>NOTA:</b> no CB2 não existe botão <code>Home</code>
+    na aba <code>Move</code>. Ir a uma posição guardada é pela aba
+    <code>AutoMove</code>, descrita na página seguinte.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_OP_0300</span><span>3 of 4</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     PENDANT — 4 de 4
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Guia de operação 0300</div>
+    <div class="grande">AutoMove, Freedrive e programas</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">AutoMove: ir a uma posição guardada</div>
+
+    <p>A aba <code>AutoMove</code> aparece quando o robô precisa chegar a um
+    ponto específico, por exemplo o ponto inicial de um programa.</p>
+
+    <ol class="passos">
+      <li>A tela mostra uma <b>animação</b> do movimento pretendido.</li>
+      <li><b>Compare a animação com o robô real</b> e confirme que o caminho
+      está livre. A animação não sabe o que há na célula.</li>
+      <li>Segure <code>Auto</code>. Ele executa enquanto o dedo estiver em
+      cima.</li>
+      <li>Se o caminho não servir, toque em <code>Manual</code>, que leva de
+      volta à aba <code>Move</code> para posicionar na mão.</li>
+    </ol>
+
+    <div class="barra">Freedrive: mover o robô com a mão</div>
+
+    <p>É o recurso mais prático para ensinar posições, e o que mais
+    impressiona quem nunca viu um robô colaborativo.</p>
+
+    <ol class="passos">
+      <li><b>Segure o braço</b> com uma das mãos, de preferência perto do
+      punho, sustentando o peso.</li>
+      <li><b>Segure o botão Freedrive</b>, no verso do pendant, com a outra
+      mão.</li>
+      <li><b>Empurre o braço</b> para onde quiser. Os freios soltam e ele
+      acompanha.</li>
+      <li><b>Solte o botão.</b> Os freios travam na hora, onde o braço
+      estiver.</li>
+    </ol>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>Se o peso da ferramenta ou a orientação de montagem estiverem
+      errados em <code>Installation</code>, o braço pode <b>começar a
+      cair</b> ao entrar em Freedrive, porque a compensação de gravidade
+      está calculada com o valor errado. <b>Solte o botão imediatamente</b>,
+      que os freios voltam, e corrija a configuração antes de tentar de
+      novo.</p>
+    </div>
+
+    <p class="nota"><b>NOTA:</b> com o robô em <code>ON</code> mas
+    <b>sem</b> ter apertado <code>Start</code>, o mesmo botão coloca as
+    juntas em modo de recuo. Serve para tirar o braço de dentro de uma
+    máquina antes de dar partida.</p>
+
+    <div class="barra">Executar um programa existente</div>
+
+    <ol class="passos">
+      <li>Na tela inicial, toque em <code>Run Program</code> e escolha o
+      arquivo.</li>
+      <li><b>Baixe a velocidade antes de começar.</b> A barra de velocidade
+      fica na parte de baixo da tela, no painel com os botões de toca-fitas.
+      Ela altera a velocidade do programa a qualquer momento, inclusive com
+      ele em execução.</li>
+      <li><b>Rode primeiro em simulação.</b> O botão
+      <code>Simulation</code>, ao lado de <code>Real Robot</code> no mesmo
+      painel, executa o programa inteiro sem mover o robô. Vale sempre na
+      primeira vez.</li>
+      <li>Passe para <code>Real Robot</code>, acione a execução e
+      <b>permaneça junto da parada de emergência</b> durante a primeira
+      passagem em velocidade real.</li>
+    </ol>
+
+    <p class="nota"><b>NOTA:</b> ao lado de cada linha do programa há um
+    indicador vermelho, amarelo ou verde: erro, linha incompleta e tudo
+    certo. Um programa só executa com todas as linhas verdes.</p>
+
+    <div class="barra">Desligar</div>
+
+    <ol class="passos">
+      <li>Pare o programa.</li>
+      <li>Na tela inicial, toque em <code>Shut Down Robot</code>. O botão de
+      energia do pendant faz o mesmo.</li>
+      <li>Espere a tela apagar sozinha antes de cortar a energia da
+      parede.</li>
+    </ol>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>Nunca desligue o robô arrancando da tomada ou batendo o disjuntor
+      com o sistema de pé. O controlador tem um sistema de arquivos como
+      qualquer computador, e cortar energia durante uma escrita corrompe
+      esse sistema. O sintoma aparece semanas depois, como um robô que não
+      dá partida, e a correção é reinstalar.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_OP_0300</span><span>4 of 4</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     NAVEGADOR — 1 de 2
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Guia de operação 0400</div>
+    <div class="grande">A tela no navegador</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>O projeto <span class="mono">cobot_testing_ur5_app</span> serve uma
+    cópia da tela <code>Move</code> do PolyScope, com o robô em 3D ao lado.
+    Aberta a partir do endereço abaixo, ela roda inteira dentro do navegador
+    e <b>não há robô do outro lado</b>: a cinemática é simulada e nada sai
+    do aparelho. É o lugar certo para errar.</p>
+
+    <pre>ricardobertolin.github.io/cobot_testing_ur5_app</pre>
+
+    <p class="reto">Não há instalação, download nem endereço a digitar. Em
+    um iPad, no Safari, <code>Compartilhar</code> &rarr; <code>Adicionar à
+    Tela de Início</code> deixa a tela cheia, com ícone próprio e sem barra
+    de endereço.</p>
+
+    <div class="barra">Anatomia da tela</div>
+
+    <table class="compacta">
+      <tr><th style="width:1.5in">Elemento</th><th>O que é</th></tr>
+      <tr><td>Abas de cima</td>
+          <td><code>Program</code>, <code>Installation</code>,
+          <code>Move</code>, <code>I/O</code>, <code>Log</code>. São as abas
+          do PolyScope. Aqui só a <code>Move</code> funciona.</td></tr>
+      <tr><td>Pílula de estado</td>
+          <td>em que pé está o enlace com o robô. Aberta do site, diz
+          <code>SIMULAÇÃO</code> o tempo todo.</td></tr>
+      <tr><td><code>Joint Position</code></td>
+          <td>o ângulo atual das seis juntas, em graus, com uma seta para
+          cada lado.</td></tr>
+      <tr><td><code>Robot</code></td>
+          <td>onde a ponta está. <code>X</code>, <code>Y</code> e
+          <code>Z</code> em milímetros, e <code>RX</code>, <code>RY</code> e
+          <code>RZ</code> em radianos.</td></tr>
+      <tr><td><code>Feature</code></td>
+          <td>escolhe entre <code>Base</code> e <code>Tool</code>, com o
+          mesmo significado da página 11.</td></tr>
+      <tr><td><code>Speed</code></td>
+          <td>a porcentagem da velocidade de jog. Nasce em 30%.</td></tr>
+      <tr><td>Botões de pose</td>
+          <td><code>Zero</code>, <code>Vertical</code> e
+          <code>Trabalho</code>. Saltam direto para a postura guardada, e
+          existem só em simulação.</td></tr>
+      <tr><td>O 3D</td>
+          <td>o robô desenhado a partir do CAD. Arrastar gira a câmera, dois
+          dedos ou a roda aproximam.</td></tr>
+    </table>
+
+    <div class="barra">Mover o robô na tela</div>
+
+    <ol class="passos">
+      <li><b>Ajuste a velocidade primeiro.</b> Deixe o <code>Speed</code> em
+      20% ou 30% enquanto estiver aprendendo.</li>
+      <li><b>Para girar uma junta</b>, segure uma das setas da linha dela em
+      <code>Joint Position</code>.</li>
+      <li><b>Para andar em linha reta</b>, use as setas de <code>X</code>,
+      <code>Y</code> e <code>Z</code> em <code>Robot</code>. Várias juntas
+      se movem ao mesmo tempo para que a ponta ande reto.</li>
+      <li><b>Para mudar só a inclinação</b> da ferramenta, sem tirar a ponta
+      do lugar, use <code>RX</code>, <code>RY</code> e <code>RZ</code>.</li>
+      <li><b>Para voltar a um lugar conhecido</b>, aperte
+      <code>Trabalho</code>.</li>
+    </ol>
+
+    <p class="nota"><b>NOTA:</b> o jog é tecla presa aqui também, e por um
+    motivo que vai além de imitar o pendant. A página renova o pedido de
+    movimento a cada 200 ms, e meio segundo sem renovação faz o servidor
+    soltar o jog sozinho. Se a página fechar, o Wi-Fi cair ou o dedo sair da
+    tela sem o evento de soltar chegar, a junta não fica girando.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_OP_0400</span><span>1 of 2</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     NAVEGADOR — 2 de 2
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Guia de operação 0400</div>
+    <div class="grande">Conexão e modos do servidor</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">Indicador de conexão</div>
+
+    <p>Toda página traz uma pílula no alto dizendo em que pé está o enlace
+    com o robô. O texto basta sozinho, e a cor é reforço.</p>
+
+    <table class="compacta">
+      <tr><th style="width:1.35in">Pílula</th><th style="width:2.2in">O que houve</th><th>O que fazer</th></tr>
+      <tr><td><code>SIMULAÇÃO</code></td><td>nenhum robô envolvido</td><td>nada, é o normal no site</td></tr>
+      <tr><td><code>CONECTADO</code></td><td>o robô responde e está pronto</td><td>nada</td></tr>
+      <tr><td><code>COMANDANDO</code></td><td>esta tela está movendo o robô</td><td>fique com o pendant na mão</td></tr>
+      <tr><td><code>ROBÔ NÃO PRONTO</code></td><td>rede boa, robô impedido de mover</td><td>ir ao pendant: falta potência, freio travado ou parada de proteção</td></tr>
+      <tr><td><code>SEM POSIÇÃO</code></td><td>o robô responde mas não transmite posição</td><td>reiniciar o robô pelo pendant</td></tr>
+      <tr><td><code>SEM CONEXÃO</code></td><td>o robô não respondeu</td><td>cabo, endereço IP ou firewall</td></tr>
+      <tr><td><code>SEM SERVIDOR</code></td><td>a página perdeu o programa no computador</td><td>a janela do iniciador fechou, abra de novo</td></tr>
+    </table>
+
+    <p class="nota"><b>Regra prática:</b> vermelho é problema de rede,
+    amarelo é ir até o robô. São dois problemas com soluções diferentes, e
+    adivinhar qual é custa tempo na célula.</p>
+
+    <div class="barra">Os modos do servidor</div>
+
+    <p>O navegador sozinho não conversa com o robô, porque navegador não
+    abre socket cru. Para isso existe um programa em Python que roda no
+    computador e fica entre os dois. Ele sobe em um de quatro modos.</p>
+
+    <table class="compacta">
+      <tr><th style="width:1.35in">Modo</th><th style="width:2.3in">O que faz</th><th>Quando usar</th></tr>
+      <tr><td><b>Simulação</b></td>
+          <td>não abre socket nenhum</td>
+          <td>aula, treino, demonstração</td></tr>
+      <tr><td><b>Robô</b><br><code>--robo</code></td>
+          <td>só consulta o estado, a cada 2 s, para acender a pílula</td>
+          <td>deixar um painel de monitoramento aberto</td></tr>
+      <tr><td><b>Espelhar</b><br><code>--espelhar</code></td>
+          <td>lê a posição real das juntas e mostra na tela, com o jog
+          desligado</td>
+          <td>acompanhar enquanto outra pessoa opera pelo pendant. É o modo
+          seguro.</td></tr>
+      <tr><td><b>Comandar</b><br><code>--comandar</code></td>
+          <td><b>move o robô de verdade</b> pelas setas da tela</td>
+          <td>só com o pendant ao alcance da mão</td></tr>
+    </table>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção — sobre o modo Comandar</span>
+      <p>No modo comandar a página ganha uma tarja vermelha, as poses
+      guardadas somem, porque salto instantâneo de junta só existe em
+      simulação, e no lugar delas aparecem <code>PARAR</code>,
+      <code>INICIO</code> e <code>DEFINIR INICIO</code>. As setas de
+      <code>RX</code>, <code>RY</code> e <code>RZ</code> passam a ser só
+      leitura.</p>
+      <p>Duas proteções em série seguram esse modo. A página renova o pedido
+      de jog a cada 200 ms, e meio segundo sem renovação faz o servidor
+      soltar. E cada comando enviado ao robô já vai com prazo de validade,
+      então o robô desacelera sozinho se o computador parar. Wi-Fi caindo
+      derruba a primeira, Python morrendo derruba a segunda, e nenhuma das
+      duas deixa junta girando.</p>
+      <p><b>O que não tem substituto é a parada de emergência física.</b> Um
+      botão numa tela de vidro não é dispositivo de homem-morto. Se o
+      objetivo é apenas acompanhar, use o modo Espelhar.</p>
+    </div>
+
+    <p class="reto">A decisão registrada no projeto é que o jog pertence ao
+    teach pendant, que é onde estão a parada de emergência em hardware e o
+    dispositivo de habilitação de três posições. O modo comandar é uma
+    exceção consciente a essa decisão, e não um recurso a ser usado por
+    comodidade.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_OP_0400</span><span>2 of 2</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     REFERÊNCIA RÁPIDA — 1 de 2
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Referência rápida 0500</div>
+    <div class="grande">Equivalências e diagnóstico</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">A mesma ação nos dois controles</div>
+
+    <table class="compacta">
+      <tr><th style="width:1.75in">O que você quer</th>
+          <th style="width:2.1in">Na tela do navegador</th>
+          <th>No teach pendant</th></tr>
+      <tr><td>Girar uma junta</td><td>setas em <code>Joint Position</code></td><td>aba <code>Move</code>, seção <code>Move Joints</code></td></tr>
+      <tr><td>Andar em linha reta</td><td>setas de <code>X</code>, <code>Y</code>, <code>Z</code></td><td>aba <code>Move</code>, setas retas de <code>Move Tool</code></td></tr>
+      <tr><td>Girar a ferramenta no lugar</td><td>setas de <code>RX</code>, <code>RY</code>, <code>RZ</code></td><td>aba <code>Move</code>, setas curvas de <code>Move Tool</code></td></tr>
+      <tr><td>Trocar o referencial</td><td><code>Feature</code>: Base ou Tool</td><td><code>Feature</code>: Base, Tool ou View</td></tr>
+      <tr><td>Mudar a velocidade</td><td>barra <code>Speed</code></td><td>barra de velocidade no painel de baixo</td></tr>
+      <tr><td>Ir a uma posição guardada</td><td>botões <code>Zero</code>, <code>Vertical</code>, <code>Trabalho</code></td><td>aba <code>AutoMove</code>, segurando <code>Auto</code></td></tr>
+      <tr><td>Ver onde a ponta está</td><td>quadro <code>Robot</code></td><td>quadro de posição da ferramenta</td></tr>
+      <tr><td>Mover o braço com a mão</td><td><i>não existe</i></td><td>botão <b>Freedrive</b>, no verso</td></tr>
+      <tr><td>Parar tudo</td><td>tirar o dedo da seta</td><td>tirar o dedo, ou a parada de emergência</td></tr>
+      <tr><td>Executar um programa</td><td><i>não existe</i></td><td><code>Run Program</code></td></tr>
+      <tr><td>Ligar e desligar o robô</td><td><i>não existe</i></td><td>botão de energia e <code>Shut Down Robot</code></td></tr>
+    </table>
+
+    <p class="nota"><b>NOTA:</b> as ausências são de propósito. A tela do
+    navegador é espelho e simulador, não substituto do pendant. Ligar,
+    inicializar, soltar freio e executar programa continuam sendo operações
+    do robô, feitas no robô.</p>
+
+    <div class="barra">Diagnóstico no robô</div>
+
+    <table class="compacta">
+      <tr><th style="width:2.0in">Sintoma</th><th style="width:1.9in">Causa provável</th><th>O que fazer</th></tr>
+      <tr><td>Tela do pendant apagada</td><td>controlador desligado, ou alimentação</td><td>aperte o botão de energia do pendant</td></tr>
+      <tr><td><code>Emergency Stopped</code></td><td>o cogumelo vermelho foi apertado</td><td>gire para destravar, depois <code>ON</code> e <code>Start</code></td></tr>
+      <tr><td>Parou sozinho no meio do movimento</td><td>parada de proteção por contato</td><td>identifique o obstáculo, afaste, destrave pela tela</td></tr>
+      <tr><td>Luzes de inicialização amarelas</td><td>juntas ainda sem referência</td><td>segure <code>Auto</code> até todas ficarem verdes</td></tr>
+      <tr><td>Uma luz vermelha teimosa</td><td>falha naquela junta</td><td><code>Shut Down Robot</code>, aguarde, ligue de novo. Persistindo, manutenção.</td></tr>
+      <tr><td>O braço cai ao apertar Freedrive</td><td>peso da ferramenta ou montagem errados</td><td>solte o botão na hora e confira <code>Installation</code></td></tr>
+      <tr><td>Recusa-se a andar numa direção</td><td>singularidade, ou limite de junta</td><td>dobre o cotovelo, ou veja a barra de curso na aba <code>Move</code></td></tr>
+    </table>
+
+    <div class="barra">Diagnóstico na tela do navegador</div>
+
+    <table class="compacta">
+      <tr><th style="width:2.4in">Sintoma</th><th>O que fazer</th></tr>
+      <tr><td>Abre em branco, ou só com a palavra <code>Jog</code></td>
+          <td>é o navegador servindo uma cópia antiga. Recarregue forçando,
+          ou abra a página de diagnóstico do projeto, que testa oito coisas
+          e diz em texto qual falhou.</td></tr>
+      <tr><td>Fica em <code>carregando malhas do CAD...</code></td>
+          <td>quase sempre é aba demais aberta no mesmo endereço. O
+          navegador só abre 6 conexões por endereço e cada aba visível
+          segura uma. Feche as outras e recarregue.</td></tr>
+      <tr><td>O robô aparece como silhueta chapada</td>
+          <td>aparelho sem WebGL2, um iPad antigo por exemplo. A tela cai
+          sozinha no desenho 2D. A pose e o tamanho continuam corretos, o
+          que some são vãos e furos.</td></tr>
+      <tr><td>Subiu em simulação e você queria o robô</td>
+          <td>feche o iniciador, execute de novo e escolha Espelhar ou
+          Comandar.</td></tr>
+    </table>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_RR_0500</span><span>1 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     REFERÊNCIA RÁPIDA — 2 de 2
+     ============================================================ -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Referência rápida 0500</div>
+    <div class="grande">Glossário e figuras</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">Glossário</div>
+
+    <table class="compacta">
+      <tr><td style="width:1.35in"><b>Cobot</b></td>
+          <td>robô colaborativo, projetado para trabalhar sem grade em
+          volta porque para ao sentir força.</td></tr>
+      <tr><td><b>TCP</b></td>
+          <td><i>Tool Center Point</i>, a ponta útil da ferramenta. É o
+          ponto que anda reto no movimento linear, e o ponto em volta do
+          qual a ferramenta gira.</td></tr>
+      <tr><td><b>Flange</b></td>
+          <td>o disco na ponta do punho 3, com os furos onde a ferramenta é
+          aparafusada.</td></tr>
+      <tr><td><b>Jog</b></td>
+          <td>mover o robô manualmente, por setas, sem programa em
+          execução.</td></tr>
+      <tr><td><b>Freedrive</b> / <b>Teach</b></td>
+          <td>modo em que os freios soltam e o braço é guiado com a
+          mão.</td></tr>
+      <tr><td><b>Singularidade</b></td>
+          <td>postura em que o braço perde a capacidade de se mover em
+          alguma direção. Não é defeito, é geometria.</td></tr>
+      <tr><td><b>PolyScope</b></td>
+          <td>o programa que roda no teach pendant, com as abas Program,
+          Installation, Move, I/O e Log.</td></tr>
+      <tr><td><b>CB2</b></td>
+          <td>a geração do controlador deste robô, anterior ao CB3. Define
+          os nomes dos botões que você vai encontrar.</td></tr>
+      <tr><td><b>Protective stop</b></td>
+          <td>parada automática por força de contato excessiva, acima de
+          cerca de 150 N.</td></tr>
+      <tr><td><b>Gêmeo digital</b></td>
+          <td>a representação do robô em 3D que acompanha a pose real ou
+          simulada, do lado da tela.</td></tr>
+    </table>
+
+    <div class="barra">Sobre as figuras</div>
+
+    <p>As Figuras 1, 3 e 4 e a imagem de capa saem do
+    <span class="mono">preparar_manual.py</span>, do mesmo cache de malhas e
+    da mesma cadeia do <span class="mono">modelo_ur5.py</span> que o gêmeo
+    digital carrega. As cotas da Figura 3 são lidas do código, e não
+    digitadas no texto: cota de manual que discorda do software é pior que
+    cota nenhuma.</p>
+
+    <p class="reto">As Figuras 5 e 6 são esquemáticas. Mostram onde as
+    coisas ficam, não como se parecem: a posição exata na tela varia com a
+    versão do PolyScope.</p>
+
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_RR_0500</span><span>2 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- ===================== REFERÊNCIA RÁPIDA 3/3 ===================== -->
+<section class="pagina">
+  <div class="marca">UR5<span>CB2</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Referência rápida 0500</div>
+    <div class="grande">Referências, marcas e créditos</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">Referências</div>
+
+    <ol class="refs">
+      <li>UNIVERSAL ROBOTS A/S. <i>User Manual, UR5 with CB2</i>, versão
+      1.6. Odense, Dinamarca.
+      <span class="url">s3-eu-west-1.amazonaws.com/ur-support-site/17955/manual_en_UR5_CB2_1.6.pdf</span><br>
+      Origem dos procedimentos de partida, inicialização das juntas, aba
+      <code>Move</code>, <code>AutoMove</code>, Freedrive e desligamento.
+      Conferido contra este documento, e não contra os manuais de CB3 ou da
+      série e.</li>
+
+      <li>UNIVERSAL ROBOTS A/S. <i>UR5 Technical details.</i> Folha de
+      dados.
+      <span class="url">universal-robots.com/media/1801303/eng_199901_ur5_tech_spec_web_a4.pdf</span><br>
+      Origem da tabela de especificações da página 4.</li>
+
+      <li>ISO 10218-1. <i>Robots and robotic devices — Safety requirements
+      for industrial robots — Part 1: Robots.</i> Citada em [1] como a
+      norma sob a qual a operação colaborativa do UR5 foi avaliada, e de
+      onde vem o limite de força de 150 N mencionado na página 7.</li>
+
+      <li>BERTOLIN, R.; BARRETO, D. S. <i>cobot_testing_ur5_app.</i>
+      <span class="url">github.com/ricardobertolin/cobot_testing_ur5_app</span><br>
+      Origem das poses guardadas, dos limites usados na validação de
+      movimento, dos modos do servidor, do comportamento da tela e das
+      cotas da Figura 3.</li>
+    </ol>
+
+    <div class="barra">Marcas e direitos</div>
+
+    <p class="reto"><b>UR5</b>, <b>PolyScope</b>, <b>URScript</b> e
+    <b>Universal Robots</b> são marcas da Universal Robots A/S. As demais
+    marcas citadas pertencem aos seus respectivos titulares. O uso aqui é
+    apenas para identificar o equipamento descrito.</p>
+
+    <p class="reto">Este é um documento <b>independente</b>, escrito no
+    laboratório como material de apoio. Não foi produzido, revisado,
+    patrocinado nem endossado pela Universal Robots A/S, e não é
+    documentação oficial do fabricante. O texto é original: nenhum trecho do
+    manual do fabricante é reproduzido aqui. Os valores da tabela de
+    especificações são citados da folha de dados pública, para referência.</p>
+
+    <p class="reto"><b>Em caso de divergência entre este documento e a
+    documentação original da Universal Robots, vale a original</b>, que é
+    também a que responde por segurança, garantia e conformidade da
+    instalação.</p>
+
+    <p class="reto">Os modelos de CAD que geram as figuras pertencem aos
+    seus respectivos titulares e aparecem aqui como ilustração técnica, em
+    contexto de ensino e pesquisa.</p>
+
+    <div class="barra">Créditos</div>
+
+    <p class="reto">Texto, figuras e software: <b>Ricardo Bertolin</b> e
+    <b>Diego Simões Barreto</b>, coautor do projeto e colaboração no
+    laboratório. &copy; 2026, sob a licença MIT do repositório.</p>
+
+    <p class="reto">Os robôs e a documentação são do laboratório. Código,
+    versão para tela e licença em
+    <span class="mono">github.com/ricardobertolin/cobot_testing_ur5_app</span>.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>UR5_CB2_RR_0500</span><span>3 of 3</span></div>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+# As figuras e o PDF sao binario. O git adivinha isso sozinho, mas aqui
+# esta escrito: uma conversao de fim de linha nesses bytes estraga o
+# arquivo.
+*.png -text
+*.pdf -text
